@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capítulo 3 - Interpolación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .chapter-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .chapter-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .chapter-header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .chapter-header p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: #fff5e0;
+        }
+
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .method-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .method-card:nth-child(1) { animation-delay: 0.1s; }
+        .method-card:nth-child(2) { animation-delay: 0.2s; }
+        .method-card:nth-child(3) { animation-delay: 0.3s; }
+        .method-card:nth-child(4) { animation-delay: 0.4s; }
+        .method-card:nth-child(5) { animation-delay: 0.5s; }
+
+        .method-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .method-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .method-card:hover::before {
+            opacity: 1;
+        }
+
+        .method-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .method-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .method-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #fff, transparent);
+            transition: width 0.4s ease;
+        }
+
+        .method-card:hover h3::after {
+            width: 100%;
+        }
+
+        .method-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .methods-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .method-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chapter-container">
+        <a href="/" class="back-button">← Volver al inicio</a>
+
+        
+        <div class="chapter-header">
+            <h1>Capítulo 3: Interpolación</h1>
+            <p>Métodos para aproximar funciones a partir de puntos conocidos</p>
+        </div>
+        
+        <div class="methods-grid">
+            <a href="{% url 'lagrange' %}" class="method-card">
+                <div class="method-icon">📈</div>
+                <h3>Lagrange</h3>
+                <p>Interpolación polinomial usando la forma de Lagrange. Útil para conjuntos pequeños de datos espaciados arbitrariamente.</p>
+            </a>
+            
+            <a href="{% url 'newton_interpol' %}" class="method-card">
+                <div class="method-icon">🔢</div>
+                <h3>Newton</h3>
+                <p>Interpolación mediante diferencias divididas de Newton. Eficiente para agregar nuevos puntos sin recalcular todo.</p>
+            </a>
+            
+            <a href="{% url 'spline_linear' %}" class="method-card">
+                <div class="method-icon">📊</div>
+                <h3>Spline Lineal</h3>
+                <p>Interpolación por tramos usando segmentos lineales. Simple y evita oscilaciones en los datos.</p>
+            </a>
+            
+            <a href="{% url 'spline_cubic' %}" class="method-card">
+                <div class="method-icon">〰️</div>
+                <h3>Spline Cúbico</h3>
+                <p>Interpolación suave usando polinomios cúbicos por tramos. Garantiza continuidad en derivadas primera y segunda.</p>
+            </a>
+            
+            <a href="{% url 'vandermonde' %}" class="method-card">
+                <div class="method-icon">🔷</div>
+                <h3>Vandermonde</h3>
+                <p>Método matricial usando la matriz de Vandermonde. Resuelve directamente el sistema para los coeficientes del polinomio.</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Incluir todo desde base
+-r base.txt
+
+# Development tools
+django-browser-reload==1.21.0  # ← Hot reload
+ipython==9.6.0                 # ← Shell mejorado
+black==25.9.0                  # ← Code formatter
+Pygments==2.19.2               # ← Syntax highlighting
+jedi==0.19.2                   # ← Autocompletar
+
+# Testing
+pytest==7.4.4
+pytest-django==4.7.0
+pytest-cov==5.0.0
+
+# Code Quality
+flake8==7.1.1
+isort==5.13.2
+mypy==1.13.0
+pylint==3.0.3
+
+# Debugging
+django-debug-toolbar==4.3.0

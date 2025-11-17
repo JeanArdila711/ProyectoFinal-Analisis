@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap1/" class="text-light">Capítulo 1</a></li>
+                    <li class="breadcrumb-item active text-white">Regla Falsa</li>
+                </ol>
+            </nav>
+
+            <!-- Título del método -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">Método de Regla Falsa</h1>
+                    <p class="lead">Variante mejorada del método de bisección usando interpolación lineal</p>
+                </div>
+            </div>
+
+            <!-- Mensajes de resultado/error -->
+            {% if template_data %}
+                {% if template_data.is_successful %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>✅ {{ template_data.message_method }}</strong>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>❌ {{ template_data.message_method }}</strong>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Descripción del método -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        El método de Regla Falsa (o <em>Falsa Posición</em>) es una técnica numérica para encontrar 
+                        raíces de ecuaciones no lineales en un intervalo <code>[a,b]</code>, donde la función 
+                        <code>f(x)</code> es continua y se cumple que <strong>f(a) × f(b) < 0</strong>.
+                    </p>
+                    <p>
+                        A diferencia de bisección que divide el intervalo por la mitad, Regla Falsa usa 
+                        <strong>interpolación lineal</strong> para calcular el punto donde la recta secante entre 
+                        (a,f(a)) y (b,f(b)) cruza el eje x. Esto generalmente converge más rápido que bisección.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Datos de Entrada</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="function_f" class="form-label">Función f(x):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white" 
+                                   id="function_f" 
+                                   name="function_f" 
+                                   placeholder="Ejemplo: x**3 - x - 2"
+                                   value="{{ request.POST.function_f }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                Use notación de Python: ** para potencias, * para multiplicación, math.sin(), math.cos(), etc.
+                            </small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="interval_a" class="form-label">Intervalo inferior (a):</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="interval_a" 
+                                       name="interval_a" 
+                                       step="any"
+                                       placeholder="Ej: 1"
+                                       value="{{ request.POST.interval_a }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="interval_b" class="form-label">Intervalo superior (b):</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="interval_b" 
+                                       name="interval_b" 
+                                       step="any"
+                                       placeholder="Ej: 2"
+                                       value="{{ request.POST.interval_b }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tolerance" class="form-label">Tolerancia:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="tolerance" 
+                                       name="tolerance" 
+                                       step="any"
+                                       placeholder="Ej: 0.0001"
+                                       value="{{ request.POST.tolerance|default:'0.0001' }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="max_iterations" 
+                                       name="max_iterations" 
+                                       placeholder="Ej: 100"
+                                       value="{{ request.POST.max_iterations|default:'100' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="precision" class="form-label">Tipo de error:</label>
+                            <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>Error relativo</option>
+                                <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>Error absoluto</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Calcular Raíz
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados (se muestra solo si hay solución exitosa) -->
+            {% if template_data.have_solution %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>✅ Raíz Encontrada</h3>
+                </div>
+                <div class="card-body">
+                    <h4>Valor de la raíz:</h4>
+                    <div class="bg-dark p-4 rounded mb-3">
+                        <code class="text-white fs-4">x = {{ template_data.root }}</code>
+                    </div>
+
+                    <h4 class="mt-4">Tabla de Iteraciones:</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Iteración</th>
+                                    <th>x<sub>n</sub></th>
+                                    <th>f(x<sub>n</sub>)</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, iteration in template_data.table.items %}
+                                <tr>
+                                    <td>{{ iteration.iteration }}</td>
+                                    <td>{{ iteration.approximate_value|floatformat:10 }}</td>
+                                    <td>{{ iteration.f_evaluated|floatformat:10 }}</td>
+                                    <td>
+                                        {% if iteration.error == inf %}
+                                            ∞
+                                        {% else %}
+                                            {{ iteration.error|floatformat:10 }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfica -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Visualización</h3>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
+                         alt="Gráfica de la función con la raíz encontrada" 
+                         class="img-fluid rounded"
+                         style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+            {% elif template_data.is_successful and not template_data.have_solution %}
+            <!-- Sin solución pero método funcionó -->
+            <div class="card bg-warning text-dark mb-4">
+                <div class="card-body">
+                    <h4>⚠️ No se encontró raíz</h4>
+                    <p>El método funcionó correctamente pero no convergió con los parámetros dados. Intenta:</p>
+                    <ul>
+                        <li>Aumentar el número de iteraciones</li>
+                        <li>Ajustar el intervalo [a, b]</li>
+                        <li>Verificar que f(a) × f(b) < 0</li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Fórmula matemática -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📐 Fórmula de Regla Falsa</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Fórmula principal:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            x<sub>n</sub> = (a · f(b) - b · f(a)) / (f(b) - f(a))
+                        </code>
+                    </div>
+                    <p>
+                        Esta fórmula calcula el punto donde la <strong>recta secante</strong> que pasa por 
+                        los puntos (a, f(a)) y (b, f(b)) intersecta el eje x.
+                    </p>
+                    
+                    <h5 class="mt-4">Algoritmo:</h5>
+                    <ol>
+                        <li>Verificar que f(a) × f(b) < 0 (cambio de signo)</li>
+                        <li>Calcular x<sub>n</sub> usando la fórmula de interpolación lineal</li>
+                        <li>Evaluar f(x<sub>n</sub>)</li>
+                        <li>Si f(a) × f(x<sub>n</sub>) < 0 → reemplazar b por x<sub>n</sub></li>
+                        <li>Si f(x<sub>n</sub>) × f(b) < 0 → reemplazar a por x<sub>n</sub></li>
+                        <li>Repetir hasta que el error < tolerancia</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Comparación con Bisección -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>⚖️ Ventajas vs Bisección</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-success">✅ Ventajas</h5>
+                            <ul>
+                                <li>Generalmente converge más rápido</li>
+                                <li>Usa información sobre la pendiente</li>
+                                <li>Mejor para funciones casi lineales</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-warning">⚠️ Desventajas</h5>
+                            <ul>
+                                <li>Puede ser lenta en funciones muy curvas</li>
+                                <li>No siempre reduce el intervalo uniformemente</li>
+                                <li>Requiere cálculo de pendiente</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Polinomio cúbico</h5>
+                    <ul>
+                        <li><strong>Función:</strong> x**3 - x - 2</li>
+                        <li><strong>Intervalo:</strong> [1, 2]</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                        <li><strong>Raíz esperada:</strong> ≈ 1.5214</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Función exponencial</h5>
+                    <ul>
+                        <li><strong>Función:</strong> math.exp(x) - 2*x - 1</li>
+                        <li><strong>Intervalo:</strong> [0, 1]</li>
+                        <li><strong>Tolerancia:</strong> 0.00001</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 3: Función trigonométrica</h5>
+                    <ul>
+                        <li><strong>Función:</strong> x - math.cos(x)</li>
+                        <li><strong>Intervalo:</strong> [0, 1]</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Botón para volver -->
+            <div class="text-center mb-5">
+                <a href="/numerical/cap1/" class="btn btn-outline-light btn-lg">
+                    ← Volver al Capítulo 1
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

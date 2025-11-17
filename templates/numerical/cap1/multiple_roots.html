@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap1/" class="text-light">Capítulo 1</a></li>
+                    <li class="breadcrumb-item active text-white">Raíces Múltiples</li>
+                </ol>
+            </nav>
+
+            <!-- Título del método -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">Método de Raíces Múltiples</h1>
+                    <p class="lead">Método modificado de Newton para raíces con multiplicidad mayor a 1</p>
+                </div>
+            </div>
+
+            <!-- Mensajes de resultado/error -->
+            {% if template_data %}
+                {% if template_data.is_successful %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>✅ {{ template_data.message_method }}</strong>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>❌ {{ template_data.message_method }}</strong>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Descripción del método -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        El método de Newton-Raphson estándar pierde su <strong>convergencia cuadrática</strong> 
+                        cuando la raíz tiene <strong>multiplicidad mayor a 1</strong> (es decir, cuando la función 
+                        y su derivada se anulan simultáneamente en la raíz).
+                    </p>
+                    <p>
+                        Este método modificado usa la <strong>segunda derivada f''(x)</strong> para recuperar 
+                        la convergencia cuadrática automáticamente, sin necesidad de conocer la multiplicidad 
+                        de antemano.
+                    </p>
+                    <div class="alert alert-info mt-3">
+                        <strong>📌 Ejemplo de raíz múltiple:</strong><br>
+                        f(x) = (x - 2)³ tiene una raíz triple en x = 2<br>
+                        f(x) = x² - 4x + 4 = (x - 2)² tiene una raíz doble en x = 2
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Datos de Entrada</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="function_f" class="form-label">Función f(x):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white" 
+                                   id="function_f" 
+                                   name="function_f" 
+                                   placeholder="Ejemplo: (x - 2)**3"
+                                   value="{{ request.POST.function_f }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                Use notación de Python. Las derivadas primera y segunda se calculan automáticamente.
+                            </small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="x0" class="form-label">Valor inicial x₀:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="x0" 
+                                       name="x0" 
+                                       step="any"
+                                       placeholder="Ej: 1"
+                                       value="{{ request.POST.x0 }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tolerance" class="form-label">Tolerancia:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="tolerance" 
+                                       name="tolerance" 
+                                       step="any"
+                                       placeholder="Ej: 0.0001"
+                                       value="{{ request.POST.tolerance|default:'0.0001' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="max_iterations" 
+                                       name="max_iterations" 
+                                       placeholder="Ej: 100"
+                                       value="{{ request.POST.max_iterations|default:'100' }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="precision" class="form-label">Tipo de error:</label>
+                                <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                    <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>Error relativo</option>
+                                    <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>Error absoluto</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Calcular Raíz
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            {% if template_data.have_solution %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>✅ Raíz Encontrada</h3>
+                </div>
+                <div class="card-body">
+                    <h4>Valor de la raíz:</h4>
+                    <div class="bg-dark p-4 rounded mb-3">
+                        <code class="text-white fs-4">x = {{ template_data.root }}</code>
+                    </div>
+
+                    <h4 class="mt-4">Tabla de Iteraciones:</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Iteración</th>
+                                    <th>x<sub>n</sub></th>
+                                    <th>f(x<sub>n</sub>)</th>
+                                    <th>f'(x<sub>n</sub>)</th>
+                                    <th>f''(x<sub>n</sub>)</th>
+                                    <th>x<sub>n+1</sub></th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, iteration in template_data.table.items %}
+                                <tr>
+                                    <td>{{ iteration.iteration }}</td>
+                                    <td>{{ iteration.approximate_value|floatformat:10 }}</td>
+                                    <td>{{ iteration.f_evaluated|floatformat:10 }}</td>
+                                    <td>{{ iteration.f_prime_evaluated|floatformat:10 }}</td>
+                                    <td>{{ iteration.f_double_prime_evaluated|floatformat:10 }}</td>
+                                    <td>{{ iteration.next_x|floatformat:10 }}</td>
+                                    <td>
+                                        {% if iteration.error == inf %}
+                                            ∞
+                                        {% else %}
+                                            {{ iteration.error|floatformat:10 }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfica -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Visualización</h3>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
+                         alt="Gráfica de la función con la raíz encontrada" 
+                         class="img-fluid rounded"
+                         style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+            {% elif template_data.is_successful and not template_data.have_solution %}
+            <div class="card bg-warning text-dark mb-4">
+                <div class="card-body">
+                    <h4>⚠️ No se encontró raíz</h4>
+                    <p>{{ template_data.message_method }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Fórmula matemática -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📐 Fórmula del Método</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Fórmula modificada:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            x<sub>n+1</sub> = x<sub>n</sub> - (f(x<sub>n</sub>) · f'(x<sub>n</sub>)) / (f'(x<sub>n</sub>)² - f(x<sub>n</sub>) · f''(x<sub>n</sub>))
+                        </code>
+                    </div>
+                    <p>
+                        Esta fórmula detecta automáticamente la multiplicidad de la raíz usando la segunda derivada.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Raíz triple</h5>
+                    <ul>
+                        <li><strong>Función:</strong> (x - 2)**3</li>
+                        <li><strong>x₀:</strong> 1</li>
+                        <li><strong>Raíz:</strong> 2 (multiplicidad 3)</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Raíz doble</h5>
+                    <ul>
+                        <li><strong>Función:</strong> x**2 - 4*x + 4</li>
+                        <li><strong>x₀:</strong> 1</li>
+                        <li><strong>Raíz:</strong> 2 (multiplicidad 2)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Botón para volver -->
+            <div class="text-center mb-5">
+                <a href="/numerical/cap1/" class="btn btn-outline-light btn-lg">
+                    ← Volver al Capítulo 1
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

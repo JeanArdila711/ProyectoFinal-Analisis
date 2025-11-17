@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap3/" class="text-light">Capítulo 3</a></li>
+                    <li class="breadcrumb-item active text-white">Interpolación de Vandermonde</li>
+                </ol>
+            </nav>
+
+            <!-- Título del método -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">Interpolación de Vandermonde</h1>
+                    <p class="lead">Resuelve un sistema lineal para encontrar el polinomio interpolante</p>
+                </div>
+            </div>
+
+            <!-- Mensajes de resultado/error -->
+            {% if template_data.message_method %}
+                {% if template_data.is_successful %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>✅ {{ template_data.message_method }}</strong>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>❌ {{ template_data.message_method }}</strong>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Descripción del método -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        La <strong>Interpolación de Vandermonde</strong> es uno de los métodos más clásicos 
+                        para encontrar un polinomio interpolante. Resuelve un <strong>sistema de ecuaciones lineales</strong> 
+                        donde la matriz de coeficientes es una matriz de Vandermonde.
+                    </p>
+                    <p>
+                        <strong>Proceso:</strong>
+                    </p>
+                    <ul>
+                        <li>1️⃣ Construir la matriz de Vandermonde V</li>
+                        <li>2️⃣ Resolver el sistema V·a = y para obtener los coeficientes a</li>
+                        <li>3️⃣ El polinomio es P(x) = a₀ + a₁·x + a₂·x² + ... + a_{n-1}·x^{n-1}</li>
+                    </ul>
+                    <p>
+                        <strong>Características:</strong>
+                    </p>
+                    <ul>
+                        <li>✅ <strong>Matemáticamente elegante</strong> - Sistema lineal directo</li>
+                        <li>✅ <strong>Genera el polinomio único</strong> de grado n-1</li>
+                        <li>✅ <strong>Base histórica</strong> - Método clásico en análisis numérico</li>
+                        <li>❌ <strong>Inestable numéricamente</strong> - Matriz de Vandermonde mal condicionada</li>
+                        <li>❌ <strong>Lento para muchos puntos</strong> - O(n³) por resolución del sistema</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Puntos de Interpolación</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Puntos X -->
+                        <div class="mb-3">
+                            <label for="x" class="form-label">Valores de X:</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white font-monospace" 
+                                   id="x" 
+                                   name="x" 
+                                   placeholder="Ejemplo: 0 1 2 3"
+                                   value="{{ request.POST.x }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                Ingresa los valores separados por espacios (máximo 10 puntos)
+                            </small>
+                        </div>
+
+                        <!-- Puntos Y -->
+                        <div class="mb-3">
+                            <label for="y" class="form-label">Valores de Y (f(x)):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white font-monospace" 
+                                   id="y" 
+                                   name="y" 
+                                   placeholder="Ejemplo: 1 2 4 7"
+                                   value="{{ request.POST.y }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                Deben ser la misma cantidad que X
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Interpolar (Vandermonde)
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            {% if template_data.have_solution %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>✅ Polinomio Interpolante Encontrado</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Polinomio P(x):</h5>
+                    <div class="bg-dark p-4 rounded mb-3">
+                        <code class="text-warning fs-5">{{ template_data.polynomial }}</code>
+                    </div>
+
+                    <!-- Gráfica -->
+                    <h5 class="mt-4">Gráfica:</h5>
+                    <div class="text-center">
+                        <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
+                             alt="Gráfica del polinomio" 
+                             class="img-fluid rounded"
+                             style="max-width: 600px; border: 2px solid #ddd; padding: 10px;">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Matriz de Vandermonde -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Matriz de Vandermonde</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Para los puntos x₀, x₁, x₂, ..., x_{n-1}, la matriz V es:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            V = [<br>
+                            &nbsp;&nbsp;1  x₀  x₀²  x₀³  ... x₀^{n-1}<br>
+                            &nbsp;&nbsp;1  x₁  x₁²  x₁³  ... x₁^{n-1}<br>
+                            &nbsp;&nbsp;1  x₂  x₂²  x₂³  ... x₂^{n-1}<br>
+                            &nbsp;&nbsp;⋮  ⋮   ⋮    ⋮    ⋱   ⋮<br>
+                            &nbsp;&nbsp;1  x_{n-1}  x_{n-1}² ... x_{n-1}^{n-1}<br>
+                            ]
+                        </code>
+                    </div>
+
+                    <p class="mt-3"><strong>Sistema a resolver:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center">
+                        <code class="text-white fs-6">
+                            V · [a₀, a₁, a₂, ..., a_{n-1}]ᵀ = [y₀, y₁, y₂, ..., y_{n-1}]ᵀ
+                        </code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fórmula matemática -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📐 Fórmula del Polinomio Interpolante</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>El polinomio resultante es:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            P(x) = a₀ + a₁·x + a₂·x² + a₃·x³ + ... + a_{n-1}·x^{n-1}
+                        </code>
+                    </div>
+
+                    <p class="mt-3"><strong>Donde:</strong></p>
+                    <ul>
+                        <li>Los coeficientes [a₀, a₁, a₂, ...] se obtienen resolviendo el sistema</li>
+                        <li>El grado del polinomio es n-1 (n es cantidad de puntos)</li>
+                        <li>P(xᵢ) = yᵢ para todos los puntos (interpolación exacta)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Polinomio Cuadrático (3 puntos)</h5>
+                    <ul>
+                        <li><strong>X:</strong> 0 1 2</li>
+                        <li><strong>Y:</strong> 1 2 4</li>
+                        <li><strong>Sistema V·a = y:</strong> Resuelve para a₀, a₁, a₂</li>
+                        <li><strong>Resultado:</strong> P(x) = 0.5x² + 0.5x + 1</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Polinomio Cúbico (4 puntos)</h5>
+                    <ul>
+                        <li><strong>X:</strong> 0 1 2 3</li>
+                        <li><strong>Y:</strong> 1 2 4 7</li>
+                        <li><strong>Grado:</strong> 3</li>
+                        <li><strong>Resultado:</strong> Polinomio cúbico interpolante</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 3: Puntos No Lineales</h5>
+                    <ul>
+                        <li><strong>X:</strong> -1 0 1 2</li>
+                        <li><strong>Y:</strong> 1 0 1 4</li>
+                        <li><strong>Resultado:</strong> Captura bien la no-linealidad</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Comparación con otros métodos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Comparación: Vandermonde vs Otros Métodos</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Aspecto</th>
+                                    <th>Vandermonde</th>
+                                    <th>Lagrange</th>
+                                    <th>Newton</th>
+                                    <th>Splines</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Método</strong></td>
+                                    <td>Sistema lineal</td>
+                                    <td>Fórmula directa</td>
+                                    <td>Diferencias divididas</td>
+                                    <td>Tramos</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estabilidad</strong></td>
+                                    <td>Mala (mal condicionada)</td>
+                                    <td>Buena</td>
+                                    <td>Excelente</td>
+                                    <td>Excelente</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Velocidad</strong></td>
+                                    <td>O(n³)</td>
+                                    <td>O(n²)</td>
+                                    <td>O(n²)</td>
+                                    <td>O(n)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Uso práctico</strong></td>
+                                    <td>Teórico, pocostos</td>
+                                    <td>Pocos puntos</td>
+                                    <td>Recomendado</td>
+                                    <td>Muy recomendado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventajas y Desventajas -->
+            <div class="card bg-warning text-dark mb-4">
+                <div class="card-header">
+                    <h3>⚠️ Ventajas vs Desventajas</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>✅ Ventajas:</h5>
+                            <ul>
+                                <li>Método clásico y bien fundamentado</li>
+                                <li>Fácil de entender conceptualmente</li>
+                                <li>Genera polinomio en forma estándar</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>❌ Desventajas:</h5>
+                            <ul>
+                                <li><strong>Matriz mal condicionada</strong> (problemas numéricos)</li>
+                                <li>Lento para muchos puntos: O(n³)</li>
+                                <li>Oscilación extrema (fenómeno de Runge) con n grande</li>
+                                <li>No recomendado para aplicaciones prácticas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón para volver -->
+            <div class="text-center mb-5">
+                <a href="/numerical/cap3/" class="btn btn-outline-light btn-lg">
+                    ← Volver al Capítulo 3
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

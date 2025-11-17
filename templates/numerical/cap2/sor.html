@@ -1,0 +1,442 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap2/" class="text-light">Capítulo 2</a></li>
+                    <li class="breadcrumb-item active text-white">SOR</li>
+                </ol>
+            </nav>
+
+            <!-- Título del método -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">Método SOR</h1>
+                    <p class="lead">Successive Over-Relaxation - Gauss-Seidel con factor de relajación</p>
+                </div>
+            </div>
+
+            <!-- Mensajes de resultado/error -->
+            {% if template_data.message_method %}
+                {% if template_data.is_successful %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>✅ {{ template_data.message_method }}</strong>
+                        {% if template_data.spectral_radius %}
+                            <br><small>Radio espectral: {{ template_data.spectral_radius|floatformat:10 }}</small>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>❌ {{ template_data.message_method }}</strong>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Descripción del método -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        SOR (Successive Over-Relaxation) es una <strong>mejora del método de Gauss-Seidel</strong> 
+                        que introduce un <strong>factor de relajación ω (omega)</strong> para acelerar la convergencia.
+                    </p>
+                    <p>
+                        El factor de relajación actúa como una "predicción" que puede acelerar o desacelerar las 
+                        actualizaciones dependiendo de su valor:
+                    </p>
+                    <ul>
+                        <li><strong>ω = 1</strong> → Gauss-Seidel puro</li>
+                        <li><strong>1 < ω < 2</strong> → Over-relaxation (acelera convergencia)</li>
+                        <li><strong>0 < ω < 1</strong> → Under-relaxation (estabiliza convergencia)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Datos de Entrada</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Selector de tamaño de matriz -->
+                        <div class="mb-3">
+                            <label for="matrix_size" class="form-label">Tamaño de la matriz:</label>
+                            <select class="form-select bg-secondary text-white" 
+                                    id="matrix_size" 
+                                    name="matrix_size" 
+                                    onchange="updateMatrixSize()" 
+                                    required>
+                                <option value="">-- Selecciona un tamaño --</option>
+                                <option value="2">2x2</option>
+                                <option value="3" selected>3x3</option>
+                                <option value="4">4x4</option>
+                                <option value="5">5x5</option>
+                                <option value="6">6x6</option>
+                                <option value="7">7x7</option>
+                            </select>
+                        </div>
+
+                        <!-- Matriz A -->
+                        <div class="mb-3">
+                            <label for="matrix_a" class="form-label">Matriz A (coeficientes):</label>
+                            <textarea class="form-control bg-secondary text-white font-monospace" 
+                                      id="matrix_a" 
+                                      name="matrix_a" 
+                                      rows="5" 
+                                      placeholder="Ejemplo para 3x3:&#10;4 -1 0&#10;-1 4 -1&#10;0 -1 4"
+                                      required>{{ request.POST.matrix_a }}</textarea>
+                            <small class="form-text text-muted">
+                                Separa cada fila con salto de línea. Separa los números de cada fila con espacios.
+                            </small>
+                        </div>
+
+                        <!-- Vector b -->
+                        <div class="mb-3">
+                            <label for="vector_b" class="form-label">Vector b (términos independientes):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white font-monospace" 
+                                   id="vector_b" 
+                                   name="vector_b" 
+                                   placeholder="Ejemplo: 15 10 10"
+                                   value="{{ request.POST.vector_b }}"
+                                   required>
+                            <small class="form-text text-muted">Separa los valores con espacios</small>
+                        </div>
+
+                        <!-- Vector inicial x0 -->
+                        <div class="mb-3">
+                            <label for="initial_guess" class="form-label">Vector inicial x₀:</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white font-monospace" 
+                                   id="initial_guess" 
+                                   name="initial_guess" 
+                                   placeholder="Ejemplo: 0 0 0"
+                                   value="{{ request.POST.initial_guess }}"
+                                   required>
+                            <small class="form-text text-muted">Vector de aproximación inicial (típicamente ceros)</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tolerance" class="form-label">Tolerancia:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="tolerance" 
+                                       name="tolerance" 
+                                       step="0.00001"
+                                       placeholder="Ej: 5e-5"
+                                       value="{{ request.POST.tolerance|default:'0.00005' }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="max_iterations" 
+                                       name="max_iterations" 
+                                       placeholder="Ej: 100"
+                                       value="{{ request.POST.max_iterations|default:'100' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="relaxation_factor" class="form-label">Factor de relajación ω:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="relaxation_factor" 
+                                       name="relaxation_factor" 
+                                       step="0.01"
+                                       min="0.01"
+                                       max="1.99"
+                                       placeholder="Ej: 1.5"
+                                       value="{{ request.POST.relaxation_factor|default:'1.5' }}"
+                                       required>
+                                <small class="form-text text-muted">Rango: 0 < ω < 2 (típico: 1.5)</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="precision" class="form-label">Tipo de precisión:</label>
+                                <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                    <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>
+                                        Decimales correctos
+                                    </option>
+                                    <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>
+                                        Cifras significativas
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Resolver Sistema
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            {% if template_data.have_solution %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>✅ Solución Encontrada</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Vector solución:</h5>
+                            <div class="bg-dark p-3 rounded">
+                                <code class="text-white">
+                                    {% for value in template_data.solution %}
+                                        x<sub>{{ forloop.counter }}</sub> = {{ value|floatformat:6 }}
+                                        {% if not forloop.last %}<br>{% endif %}
+                                    {% endfor %}
+                                </code>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Parámetros finales:</h5>
+                            <div class="bg-dark p-3 rounded">
+                                <small class="text-muted">
+                                    Factor ω: {{ template_data.relaxation_factor|floatformat:2 }}<br>
+                                    Radio espectral: {{ template_data.spectral_radius|floatformat:10 }}<br>
+                                    Iteraciones realizadas: {{ template_data.table|length }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4">Tabla de Iteraciones:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Iter</th>
+                                    {% for i in template_data.indexes %}
+                                        <th>x<sub>{{ i }}</sub></th>
+                                    {% endfor %}
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, iteration in template_data.table.items %}
+                                <tr>
+                                    <td>{{ iteration.iteration }}</td>
+                                    {% if iteration.X %}
+                                        {% for value in iteration.X %}
+                                        <td>{{ value|default:"-" }}</td>
+                                        {% endfor %}
+                                    {% else %}
+                                        <td colspan="{{ template_data.indexes|length }}">Sin datos</td>
+                                    {% endif %}
+                                    <td>{{ iteration.Error|default:"-" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficas (solo para sistemas 2x2) -->
+            {% if template_data.indexes|length == 2 %}
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card bg-dark text-white">
+                        <div class="card-header">
+                            <h3>📊 Convergencia</h3>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="{% static 'img/numerical_method/matrix_solution_plot.svg' %}" 
+                                 alt="Gráfica de convergencia" 
+                                 class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card bg-dark text-white">
+                        <div class="card-header">
+                            <h3>📈 Sistema de Ecuaciones</h3>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="{% static 'img/numerical_method/system_plot.svg' %}" 
+                                 alt="Gráfica del sistema" 
+                                 class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% elif template_data.is_successful and not template_data.have_solution %}
+            <div class="card bg-warning text-dark mb-4">
+                <div class="card-body">
+                    <h4>⚠️ No se encontró solución</h4>
+                    <p>{{ template_data.message_method }}</p>
+                    <p><strong>Posibles causas:</strong></p>
+                    <ul>
+                        <li>El factor ω está fuera del rango óptimo</li>
+                        <li>El método no converge para esta matriz</li>
+                        <li>La matriz no es diagonalmente dominante</li>
+                        <li>Se necesitan más iteraciones</li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Fórmula matemática -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📐 Fórmula SOR</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Fórmula iterativa con factor de relajación:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            x<sub>i</sub><sup>(k+1)</sup> = (1 - ω)x<sub>i</sub><sup>(k)</sup> + (ω/a<sub>ii</sub>)(b<sub>i</sub> - Σ<sub>j&lt;i</sub> a<sub>ij</sub>x<sub>j</sub><sup>(k+1)</sup> - Σ<sub>j&gt;i</sub> a<sub>ij</sub>x<sub>j</sub><sup>(k)</sup>)
+                        </code>
+                    </div>
+
+                    <h5 class="mt-4">Interpretación del Factor ω:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Valor de ω</th>
+                                    <th>Tipo</th>
+                                    <th>Efecto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>ω = 1</strong></td>
+                                    <td>Gauss-Seidel</td>
+                                    <td>Convergencia estándar</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>1 < ω < 2</strong></td>
+                                    <td>Over-Relaxation</td>
+                                    <td>Acelera convergencia (si matriz adecuada)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>0 < ω < 1</strong></td>
+                                    <td>Under-Relaxation</td>
+                                    <td>Estabiliza si sistema es difícil</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos Recomendados</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Sistema 3x3 con ω = 1.5</h5>
+                    <ul>
+                        <li><strong>A:</strong> 4 -1 0 / -1 4 -1 / 0 -1 4</li>
+                        <li><strong>b:</strong> 15 10 10</li>
+                        <li><strong>x₀:</strong> 0 0 0</li>
+                        <li><strong>ω:</strong> 1.5 (acelera SOR)</li>
+                        <li><strong>Nota:</strong> Converge más rápido que Gauss-Seidel</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Sistema 2x2 con ω = 1.0</h5>
+                    <ul>
+                        <li><strong>A:</strong> 10 1 / 1 10</li>
+                        <li><strong>b:</strong> 11 11</li>
+                        <li><strong>x₀:</strong> 0 0</li>
+                        <li><strong>ω:</strong> 1.0 (Gauss-Seidel puro)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Comparación de métodos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Comparación: Jacobi vs Gauss-Seidel vs SOR</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Aspecto</th>
+                                    <th>Jacobi</th>
+                                    <th>Gauss-Seidel</th>
+                                    <th>SOR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Velocidad</strong></td>
+                                    <td>Lenta</td>
+                                    <td>2x más rápido</td>
+                                    <td>Hasta 10x más rápido</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Factor variable</strong></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>ω (0, 2)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Paralelizable</strong></td>
+                                    <td>Sí</td>
+                                    <td>No</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón para volver -->
+            <div class="text-center mb-5">
+                <a href="/numerical/cap2/" class="btn btn-outline-light btn-lg">
+                    ← Volver al Capítulo 2
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateMatrixSize() {
+    const size = document.getElementById('matrix_size').value;
+    const matrixA = document.getElementById('matrix_a');
+    const vectorB = document.getElementById('vector_b');
+    const initialGuess = document.getElementById('initial_guess');
+    
+    if (size == 2) {
+        matrixA.placeholder = "Ejemplo para 2x2:\n10 1\n1 10";
+        vectorB.placeholder = "Ejemplo: 11 11";
+        initialGuess.placeholder = "Ejemplo: 0 0";
+    } else if (size == 3) {
+        matrixA.placeholder = "Ejemplo para 3x3:\n4 -1 0\n-1 4 -1\n0 -1 4";
+        vectorB.placeholder = "Ejemplo: 15 10 10";
+        initialGuess.placeholder = "Ejemplo: 0 0 0";
+    } else {
+        matrixA.placeholder = `Ejemplo para ${size}x${size}:\nIngresa ${size} filas de ${size} números cada una`;
+        vectorB.placeholder = `Ejemplo: ${Array(size).fill('0').join(' ')}`;
+        initialGuess.placeholder = `Ejemplo: ${Array(size).fill('0').join(' ')}`;
+    }
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap1/" class="text-light">Capítulo 1</a></li>
+                    <li class="breadcrumb-item active text-white">Punto Fijo</li>
+                </ol>
+            </nav>
+
+            <!-- Título del método -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">Método de Punto Fijo</h1>
+                    <p class="lead">Iteración mediante transformación de f(x) = 0 en x = g(x)</p>
+                </div>
+            </div>
+
+            <!-- Mensajes de resultado/error -->
+            {% if template_data %}
+                {% if template_data.is_successful %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>✅ {{ template_data.message_method }}</strong>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>❌ {{ template_data.message_method }}</strong>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Descripción del método -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        El método de punto fijo es una técnica para resolver ecuaciones no lineales que consiste 
+                        en <strong>reformular la ecuación original f(x) = 0 en la forma x = g(x)</strong>, donde 
+                        g(x) es una función auxiliar que se elige para que sus iteraciones sucesivas converjan 
+                        a una raíz de f(x).
+                    </p>
+                    <p>
+                        A partir de un valor inicial x₀, se evalúa iterativamente g(x), generando una secuencia:
+                        x₁ = g(x₀), x₂ = g(x₁), x₃ = g(x₂), ... Los valores obtenidos tienden a aproximarse 
+                        cada vez más a la raíz si la función g(x) cumple ciertas condiciones de convergencia.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Datos de Entrada</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="function_f" class="form-label">Función original f(x):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white" 
+                                   id="function_f" 
+                                   name="function_f" 
+                                   placeholder="Ejemplo: x**2 - 4"
+                                   value="{{ request.POST.function_f }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                La ecuación que queremos resolver: f(x) = 0
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="function_g" class="form-label">Función de iteración g(x):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white" 
+                                   id="function_g" 
+                                   name="function_g" 
+                                   placeholder="Ejemplo: (x**2 + 4) / (2*x)"
+                                   value="{{ request.POST.function_g }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                La función tal que x = g(x). Debe cumplir que g(x) = 0 cuando f(x) = 0
+                            </small>
+                        </div>
+
+                        <div class="alert alert-info" role="alert">
+                            <strong>💡 Importante:</strong> g(x) debe derivarse de f(x) = 0. Por ejemplo:
+                            <ul class="mb-0 mt-2">
+                                <li>Si f(x) = x² - 4 → g(x) = √4 = 4/x (despejando x)</li>
+                                <li>Si f(x) = x - cos(x) → g(x) = cos(x)</li>
+                            </ul>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="x0" class="form-label">Valor inicial x₀:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="x0" 
+                                       name="x0" 
+                                       step="any"
+                                       placeholder="Ej: 1"
+                                       value="{{ request.POST.x0 }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tolerance" class="form-label">Tolerancia:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="tolerance" 
+                                       name="tolerance" 
+                                       step="any"
+                                       placeholder="Ej: 0.0001"
+                                       value="{{ request.POST.tolerance|default:'0.0001' }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="max_iterations" 
+                                       name="max_iterations" 
+                                       placeholder="Ej: 100"
+                                       value="{{ request.POST.max_iterations|default:'100' }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="precision" class="form-label">Tipo de error:</label>
+                                <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                    <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>Error relativo</option>
+                                    <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>Error absoluto</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Calcular Raíz
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados (se muestra solo si hay solución exitosa) -->
+            {% if template_data.have_solution %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>✅ Raíz Encontrada</h3>
+                </div>
+                <div class="card-body">
+                    <h4>Valor de la raíz:</h4>
+                    <div class="bg-dark p-4 rounded mb-3">
+                        <code class="text-white fs-4">x = {{ template_data.root }}</code>
+                    </div>
+
+                    <h4 class="mt-4">Tabla de Iteraciones:</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Iteración</th>
+                                    <th>g(x<sub>n</sub>)</th>
+                                    <th>f(x<sub>n</sub>)</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, iteration in template_data.table.items %}
+                                <tr>
+                                    <td>{{ iteration.iteration }}</td>
+                                    <td>{{ iteration.approximate_value|floatformat:10 }}</td>
+                                    <td>{{ iteration.f_evaluated|floatformat:10 }}</td>
+                                    <td>
+                                        {% if iteration.error == inf %}
+                                            ∞
+                                        {% else %}
+                                            {{ iteration.error|floatformat:10 }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfica -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Visualización</h3>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
+                         alt="Gráfica de la función con la raíz encontrada" 
+                         class="img-fluid rounded"
+                         style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+            {% elif template_data.is_successful and not template_data.have_solution %}
+            <!-- Sin solución pero método funcionó -->
+            <div class="card bg-warning text-dark mb-4">
+                <div class="card-body">
+                    <h4>⚠️ No se encontró raíz</h4>
+                    <p>{{ template_data.message_method }}</p>
+                    <p><strong>Posibles causas:</strong></p>
+                    <ul>
+                        <li>La función g(x) no cumple las condiciones de convergencia</li>
+                        <li>El punto inicial x₀ está fuera del radio de convergencia</li>
+                        <li>|g'(x)| ≥ 1 en el intervalo (no converge)</li>
+                        <li>Se requieren más iteraciones</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Gráfica -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Visualización</h3>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
+                         alt="Gráfica de la función" 
+                         class="img-fluid rounded"
+                         style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Fórmula matemática -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📐 Fórmula de Punto Fijo</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Transformación de la ecuación:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            f(x) = 0  →  x = g(x)
+                        </code>
+                    </div>
+
+                    <p><strong>Fórmula iterativa:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            x<sub>n+1</sub> = g(x<sub>n</sub>)
+                        </code>
+                    </div>
+
+                    <h5 class="mt-4">Condiciones de Convergencia:</h5>
+                    <p>Para que el método converja, g(x) debe cumplir:</p>
+                    <ol>
+                        <li><strong>|g'(x)| < 1</strong> en un intervalo alrededor de la raíz</li>
+                        <li>g(x) debe ser continua</li>
+                        <li>El punto fijo p cumple: p = g(p)</li>
+                    </ol>
+
+                    <h5 class="mt-3">Algoritmo:</h5>
+                    <ol>
+                        <li>Reformular f(x) = 0 como x = g(x)</li>
+                        <li>Comenzar con un valor inicial x₀</li>
+                        <li>Calcular x₁ = g(x₀)</li>
+                        <li>Calcular x₂ = g(x₁)</li>
+                        <li>Repetir hasta que |x<sub>n+1</sub> - x<sub>n</sub>| < tolerancia</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Cómo construir g(x) -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🎯 Cómo Construir g(x)</h3>
+                </div>
+                <div class="card-body">
+                    <p>Existen varias formas de despejar x = g(x) desde f(x) = 0:</p>
+                    
+                    <h5>Ejemplo 1: x² - 4 = 0</h5>
+                    <ul>
+                        <li><strong>Opción A:</strong> x = √4 → g(x) = 4/x</li>
+                        <li><strong>Opción B:</strong> x = x² - 4 + x → g(x) = (x² + 4)/(2*x)</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: x - cos(x) = 0</h5>
+                    <ul>
+                        <li><strong>Opción A:</strong> x = cos(x) → g(x) = cos(x)</li>
+                        <li><strong>Opción B:</strong> x = x - (x - cos(x)) → g(x) = cos(x)</li>
+                    </ul>
+
+                    <div class="alert alert-warning mt-3">
+                        <strong>⚠️ Importante:</strong> No todas las formas de g(x) convergen. 
+                        Verifica que |g'(x)| < 1 cerca de la raíz.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Raíz cuadrada</h5>
+                    <ul>
+                        <li><strong>f(x):</strong> x**2 - 4</li>
+                        <li><strong>g(x):</strong> 4/x</li>
+                        <li><strong>x₀:</strong> 1</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                        <li><strong>Raíz esperada:</strong> 2</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Ecuación trigonométrica</h5>
+                    <ul>
+                        <li><strong>f(x):</strong> x - math.cos(x)</li>
+                        <li><strong>g(x):</strong> math.cos(x)</li>
+                        <li><strong>x₀:</strong> 0.5</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                        <li><strong>Raíz esperada:</strong> ≈ 0.7391</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 3: Ecuación exponencial</h5>
+                    <ul>
+                        <li><strong>f(x):</strong> math.exp(x) - x - 2</li>
+                        <li><strong>g(x):</strong> math.log(x + 2)</li>
+                        <li><strong>x₀:</strong> 1</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Botón para volver -->
+            <div class="text-center mb-5">
+                <a href="/numerical/cap1/" class="btn btn-outline-light btn-lg">
+                    ← Volver al Capítulo 1
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

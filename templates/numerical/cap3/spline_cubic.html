@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap3/" class="text-light">Capítulo 3</a></li>
+                    <li class="breadcrumb-item active text-white">Spline Cúbico</li>
+                </ol>
+            </nav>
+
+            <!-- Título del método -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">Spline Cúbico</h1>
+                    <p class="lead">Interpolación suave con polinomios cúbicos</p>
+                </div>
+            </div>
+
+            <!-- Mensajes de resultado/error -->
+            {% if template_data.message_method %}
+                {% if template_data.is_successful %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>✅ {{ template_data.message_method }}</strong>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>❌ {{ template_data.message_method }}</strong>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Descripción del método -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Un <strong>Spline Cúbico</strong> es una función suave por tramos, donde cada tramo 
+                        es un <strong>polinomio de grado 3 (cúbico)</strong>. Es el método de interpolación 
+                        más usado en la práctica porque combina suavidad con estabilidad.
+                    </p>
+                    <p>
+                        <strong>Características:</strong>
+                    </p>
+                    <ul>
+                        <li>✅ <strong>Suave (C² continua)</strong> - Primera y segunda derivadas continuas</li>
+                        <li>✅ <strong>Natural</strong> - Condiciones de frontera que evitan oscilación</li>
+                        <li>✅ <strong>Estable</strong> - No sufre del fenómeno de Runge</li>
+                        <li>✅ <strong>Preciso</strong> - Buena aproximación de funciones suaves</li>
+                        <li>❌ <strong>Más complejo</strong> - Requiere resolver un sistema lineal</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Puntos de Interpolación</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Puntos X -->
+                        <div class="mb-3">
+                            <label for="x" class="form-label">Valores de X:</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white font-monospace" 
+                                   id="x" 
+                                   name="x" 
+                                   placeholder="Ejemplo: 0 1 2 3 4"
+                                   value="{{ request.POST.x }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                Ingresa los valores separados por espacios (mínimo 3, máximo 8 puntos)
+                            </small>
+                        </div>
+
+                        <!-- Puntos Y -->
+                        <div class="mb-3">
+                            <label for="y" class="form-label">Valores de Y (f(x)):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white font-monospace" 
+                                   id="y" 
+                                   name="y" 
+                                   placeholder="Ejemplo: 0 1 4 2 5"
+                                   value="{{ request.POST.y }}"
+                                   required>
+                            <small class="form-text text-muted">
+                                Deben ser la misma cantidad que X
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Calcular Spline Cúbico
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            {% if template_data.have_solution %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>✅ Spline Cúbico Calculado</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ecuaciones de los Tramos (Polinomios Cúbicos):</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Ecuación Cúbica</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tramo in template_data.tramos %}
+                                <tr>
+                                    <td><strong>{{ forloop.counter }}</strong></td>
+                                    <td>
+                                        <code class="text-warning" style="font-size: 0.85rem;">
+                                            {{ tramo }}
+                                        </code>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Explicación del formato -->
+                    <div class="alert alert-info mt-3">
+                        <small>
+                            <strong>Formato:</strong> S<sub>i</sub>(x) = a₀ + a₁·(x - x<sub>i</sub>) + a₂·(x - x<sub>i</sub>)² + a₃·(x - x<sub>i</sub>)³
+                        </small>
+                    </div>
+
+                    <!-- Gráfica -->
+                    <h5 class="mt-4">Gráfica:</h5>
+                    <div class="text-center">
+                        <img src="{% static 'img/numerical_method/spline_cubic_plot.svg' %}" 
+                             alt="Gráfica del spline cúbico" 
+                             class="img-fluid rounded"
+                             style="max-width: 700px; border: 2px solid #ddd; padding: 10px;">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Fórmula matemática -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📐 Fórmula del Spline Cúbico</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Para cada intervalo [x<sub>i</sub>, x<sub>i+1</sub>]:</strong></p>
+                    <div class="bg-secondary p-3 rounded text-center mb-3">
+                        <code class="text-white fs-6">
+                            S<sub>i</sub>(x) = a<sub>i</sub> + b<sub>i</sub>·(x - x<sub>i</sub>) + c<sub>i</sub>·(x - x<sub>i</sub>)² + d<sub>i</sub>·(x - x<sub>i</sub>)³
+                        </code>
+                    </div>
+
+                    <p class="mt-3"><strong>Condiciones de continuidad:</strong></p>
+                    <ul>
+                        <li><strong>C⁰:</strong> S<sub>i</sub>(x<sub>i+1</sub>) = S<sub>i+1</sub>(x<sub>i+1</sub>) (puntos coinciden)</li>
+                        <li><strong>C¹:</strong> S'<sub>i</sub>(x<sub>i+1</sub>) = S'<sub>i+1</sub>(x<sub>i+1</sub>) (primera derivada continua)</li>
+                        <li><strong>C²:</strong> S''<sub>i</sub>(x<sub>i+1</sub>) = S''<sub>i+1</sub>(x<sub>i+1</sub>) (segunda derivada continua)</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>Condiciones de frontera "Natural":</strong></p>
+                    <ul>
+                        <li>S''(x₀) = 0 (curvatura cero al inicio)</li>
+                        <li>S''(x<sub>n</sub>) = 0 (curvatura cero al final)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Función Suave Simple</h5>
+                    <ul>
+                        <li><strong>X:</strong> 0 1 2 3</li>
+                        <li><strong>Y:</strong> 0 1 2 3</li>
+                        <li><strong>Resultado:</strong> Aproximadamente lineal (pendiente constante)</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Función Curva</h5>
+                    <ul>
+                        <li><strong>X:</strong> 0 1 2 3 4</li>
+                        <li><strong>Y:</strong> 0 1 4 2 5</li>
+                        <li><strong>Resultado:</strong> Curva suave que pasa por todos los puntos</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 3: Función Sinusoidal</h5>
+                    <ul>
+                        <li><strong>X:</strong> 0 0.5 1 1.5 2</li>
+                        <li><strong>Y:</strong> 0 0.5 1 0.5 0</li>
+                        <li><strong>Resultado:</strong> Aproximación suave de media onda sinusoidal</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Comparación de splines -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Comparación Completa de Métodos de Interpolación</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Aspecto</th>
+                                    <th>Lagrange</th>
+                                    <th>Spline Lineal</th>
+                                    <th>Spline Cúbico</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Grado del Polinomio</strong></td>
+                                    <td>n-1 (global)</td>
+                                    <td>1 (por tramo)</td>
+                                    <td>3 (por tramo)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Continuidad</strong></td>
+                                    <td>C∞ (suave)</td>
+                                    <td>C⁰ (puntos)</td>
+                                    <td>C² (muy suave)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Oscilación</strong></td>
+                                    <td>Alta para muchos puntos</td>
+                                    <td>Ninguna</td>
+                                    <td>Mínima</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Complejidad</strong></td>
+                                    <td>Baja</td>
+                                    <td>Muy baja</td>
+                                    <td>Media</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Uso Típico</strong></td>
+                                    <td>Pocos puntos</td>
+                                    <td>Datos discretos</td>
+                                    <td>CAD, Gráficos, Ciencia</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventajas del Spline Cúbico -->
+            <div class="card bg-info text-dark mb-4">
+                <div class="card-header">
+                    <h3>⭐ ¿Por qué el Spline Cúbico?</h3>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li><strong>Grado 3 es el mínimo</strong> para garantizar C² continuidad (derivadas suaves)</li>
+                        <li><strong>Grado 4+ sería excesivo</strong> (complejidad sin beneficio)</li>
+                        <li><strong>Usado industrialmente</strong> en CAD, diseño gráfico, física computacional</li>
+                        <li><strong>No sufre oscilación</strong> como Lagrange con muchos puntos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Botón para volver -->
+            <div class="text-center mb-5">
+                <a href="/numerical/cap3/" class="btn btn-outline-light btn-lg">
+                    ← Volver al Capítulo 3
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,8 @@
+# Incluir todo desde base
+-r base.txt
+
+# Production-specific
+gunicorn==23.0.0              # ← WSGI server
+whitenoise==6.8.2             # ← Servir archivos estáticos
+django-cors-headers==4.6.0    # ← CORS para APIs
+python-decouple==3.8          # ← Ya en base, redundante pero asegura

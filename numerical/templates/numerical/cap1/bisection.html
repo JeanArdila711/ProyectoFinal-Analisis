@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Método de Bisección</h2>
+<p>Ingrese los parámetros para resolver la función.</p>
+<form method="post">
+  {% csrf_token %}
+  <label>f(x):</label>
+  <input type="text" name="function_f" class="form-control" placeholder="x**3 - x - 2">
+  <label>a:</label>
+  <input type="number" step="any" name="interval_a" class="form-control">
+  <label>b:</label>
+  <input type="number" step="any" name="interval_b" class="form-control">
+  <label>Tolerancia:</label>
+  <input type="number" step="any" name="tolerance" class="form-control">
+  <label>Iteraciones Máx.:</label>
+  <input type="number" name="max_iterations" class="form-control">
+  <label>Precisión:</label>
+  <input type="number" name="precision" class="form-control">
+  <button class="btn btn-danger mt-3" type="submit">Calcular</button>
+</form>
+
+{% if template_data %}
+  <hr>
+  <h5>Resultado:</h5>
+  <p>{{ template_data.message_method }}</p>
+{% endif %}
+{% endblock %}
