@@ -1,6 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Capítulo 2: Métodos Iterativos</h1>
-<p>Jacobi, Gauss-Seidel, SOR.</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-danger mb-4">📚 Capítulo 2: Métodos Iterativos para Sistemas Lineales</h1>
+            <p class="lead">Selecciona un método individual o compara todos los métodos.</p>
+        </div>
+    </div>
+
+    <!-- Comparación de Métodos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">🔍 Comparación de Métodos</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Compara los tres métodos iterativos para sistemas lineales en una sola ejecución.</p>
+                    <a href="{% url 'comparison_linear' %}" class="btn btn-danger btn-lg">
+                        🚀 Ir a Comparación
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métodos Individuales -->
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-3">📖 Métodos Individuales</h3>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Jacobi</h5>
+                    <p class="card-text">Método iterativo de Jacobi para sistemas lineales.</p>
+                    <a href="{% url 'jacobi' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Gauss-Seidel</h5>
+                    <p class="card-text">Método iterativo de Gauss-Seidel.</p>
+                    <a href="{% url 'gauss_seidel' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">SOR</h5>
+                    <p class="card-text">Método de Sobrerrelajación Sucesiva (SOR).</p>
+                    <a href="{% url 'sor' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

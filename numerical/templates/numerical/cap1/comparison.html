@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Comparación de Métodos de Raíces{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap1/" class="text-light">Capítulo 1</a></li>
+                    <li class="breadcrumb-item active text-white">Comparación de Métodos</li>
+                </ol>
+            </nav>
+
+            <!-- Título -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">🔍 Comparación de Métodos Numéricos</h1>
+                    <p class="lead">Compara los cinco métodos de búsqueda de raíces: Bisección, Punto Fijo, Newton-Raphson, Regla Falsa y Secante</p>
+                </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Esta herramienta te permite comparar simultáneamente los cinco métodos numéricos más utilizados 
+                        para encontrar raíces de ecuaciones no lineales. Ingresa los parámetros una sola vez y obtén 
+                        resultados comparativos detallados, incluyendo análisis de eficiencia, precisión y recomendaciones.
+                    </p>
+                    <p>
+                        <strong>Métodos incluidos:</strong> Bisección, Punto Fijo, Newton-Raphson, Regla Falsa y Secante.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Datos de Entrada</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="function_f" class="form-label">Función f(x):</label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white" 
+                                   id="function_f" 
+                                   name="function_f" 
+                                   placeholder="Ejemplo: x**3 - x - 2"
+                                   value="{% if request.POST.function_f %}{{ request.POST.function_f }}{% elif template_data.form_data.function_f %}{{ template_data.form_data.function_f }}{% endif %}"
+                                   required>
+                            <small class="form-text text-muted">
+                                Use notación de Python: ** para potencias, * para multiplicación, math.sin(), math.cos(), math.exp(), etc.
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="function_g" class="form-label">Función g(x) <span class="text-muted">(Opcional - solo para Punto Fijo):</span></label>
+                            <input type="text" 
+                                   class="form-control bg-secondary text-white" 
+                                   id="function_g" 
+                                   name="function_g" 
+                                   placeholder="Ejemplo: x**3 - 2"
+                                   value="{% if request.POST.function_g %}{{ request.POST.function_g }}{% elif template_data.form_data.function_g %}{{ template_data.form_data.function_g }}{% endif %}">
+                            <small class="form-text text-muted">
+                                Solo necesario si deseas usar el método de Punto Fijo. Debe cumplir x = g(x) para la raíz buscada.
+                            </small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="interval_a" class="form-label">Intervalo inferior (a):</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="interval_a" 
+                                       name="interval_a" 
+                                       step="any"
+                                       placeholder="Ej: 1"
+                                       value="{% if request.POST.interval_a %}{{ request.POST.interval_a }}{% elif template_data.form_data.interval_a %}{{ template_data.form_data.interval_a }}{% else %}1{% endif %}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="interval_b" class="form-label">Intervalo superior (b):</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="interval_b" 
+                                       name="interval_b" 
+                                       step="any"
+                                       placeholder="Ej: 2"
+                                       value="{% if request.POST.interval_b %}{{ request.POST.interval_b }}{% elif template_data.form_data.interval_b %}{{ template_data.form_data.interval_b }}{% else %}2{% endif %}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="x0" class="form-label">Punto inicial x₀:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="x0" 
+                                       name="x0" 
+                                       step="any"
+                                       placeholder="Ej: 1.5"
+                                       value="{% if request.POST.x0 %}{{ request.POST.x0 }}{% elif template_data.form_data.x0 %}{{ template_data.form_data.x0 }}{% else %}1.5{% endif %}"
+                                       required>
+                                <small class="form-text text-muted">
+                                    Usado por Punto Fijo, Newton-Raphson y Secante
+                                </small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tolerance" class="form-label">Tolerancia:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="tolerance" 
+                                       name="tolerance" 
+                                       step="any"
+                                       placeholder="Ej: 0.0001"
+                                       value="{% if request.POST.tolerance %}{{ request.POST.tolerance }}{% elif template_data.form_data.tolerance %}{{ template_data.form_data.tolerance }}{% else %}0.0001{% endif %}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="max_iterations" 
+                                       name="max_iterations" 
+                                       placeholder="Ej: 100"
+                                       value="{% if request.POST.max_iterations %}{{ request.POST.max_iterations }}{% elif template_data.form_data.max_iterations %}{{ template_data.form_data.max_iterations }}{% else %}100{% endif %}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="precision" class="form-label">Tipo de error:</label>
+                                <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                    <option value="0" {% if request.POST.precision == '0' or not request.POST.precision %}selected{% elif template_data.form_data.precision == 0 %}selected{% endif %}>Error relativo</option>
+                                    <option value="1" {% if request.POST.precision == '1' %}selected{% elif template_data.form_data.precision == 1 %}selected{% endif %}>Error absoluto</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="generate_pdf" 
+                                       name="generate_pdf"
+                                       {% if request.POST.generate_pdf == 'on' %}checked{% elif template_data.form_data.generate_pdf %}checked{% endif %}>
+                                <label class="form-check-label" for="generate_pdf">
+                                    <strong>Generar reporte PDF</strong>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Comparar Métodos
+                        </button>
+                        <a href="{% url 'chapter1' %}" class="btn btn-outline-light btn-lg ms-2">
+                            ← Volver al Capítulo 1
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            {% if template_data.comparison_data %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Resultados Comparativos</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Tabla de Comparación -->
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Método</th>
+                                    <th>Estado</th>
+                                    <th>Iteraciones</th>
+                                    <th>Raíz Aproximada</th>
+                                    <th>Error Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for method in template_data.comparison_data.methods %}
+                                <tr>
+                                    <td><strong>{{ method.method }}</strong></td>
+                                    <td>
+                                        {% if method.status == "Exitoso" %}
+                                            <span class="badge bg-success">{{ method.status }}</span>
+                                        {% elif method.status == "Sin convergencia" %}
+                                            <span class="badge bg-warning text-dark">{{ method.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ method.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ method.iterations }}</td>
+                                    <td>
+                                        {% if method.root != "N/A" %}
+                                            <code class="text-white">{{ method.root|floatformat:6 }}</code>
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if method.final_error != "N/A" %}
+                                            {{ method.final_error|scientific:2 }}
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if method.error %}
+                                <tr class="table-warning">
+                                    <td colspan="5" class="text-dark">
+                                        <small><strong>Error:</strong> {{ method.error }}</small>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Análisis Comparativo -->
+
+                        <div class="alert alert-light">
+                            <h6 class="alert-heading">💡 Conclusión:</h6>
+                            <p class="mb-0">{{ template_data.comparison_data.analysis.summary }}</p>
+                        </div>
+                    </div>
+
+
+                    <!-- Descarga de PDF -->
+                    {% if template_data.pdf_path %}
+                    <div class="mt-3">
+                        <a href="{% url 'download_file' template_data.pdf_path %}" 
+                           class="btn btn-light btn-lg" target="_blank">
+                            📄 Descargar Reporte PDF
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Polinomio cúbico</h5>
+                    <ul>
+                        <li><strong>Función f(x):</strong> x**3 - x - 2</li>
+                        <li><strong>Intervalo:</strong> [1, 2]</li>
+                        <li><strong>Punto inicial x₀:</strong> 1.5</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Función trigonométrica</h5>
+                    <ul>
+                        <li><strong>Función f(x):</strong> math.cos(x) - x</li>
+                        <li><strong>Intervalo:</strong> [0, 1]</li>
+                        <li><strong>Punto inicial x₀:</strong> 0.5</li>
+                        <li><strong>Tolerancia:</strong> 0.00001</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 3: Función exponencial</h5>
+                    <ul>
+                        <li><strong>Función f(x):</strong> math.exp(x) - 3*x</li>
+                        <li><strong>Intervalo:</strong> [0, 2]</li>
+                        <li><strong>Punto inicial x₀:</strong> 1.0</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
