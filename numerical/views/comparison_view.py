@@ -11,7 +11,7 @@ import json
 
 
 class ComparisonView(TemplateView):
-    template_name = "comparison.html"
+    template_name = "numerical/cap1/comparison.html"
 
     @inject
     def __init__(
@@ -130,6 +130,7 @@ class ComparisonView(TemplateView):
             tolerance=tolerance,
             max_iterations=max_iterations,
             function_f=function_f,
+            interval_b=interval_b,
         )
 
         secant_result = None
@@ -140,6 +141,7 @@ class ComparisonView(TemplateView):
                 tolerance=tolerance,
                 max_iterations=max_iterations,
                 precision=precision,
+                interval_b=interval_b,
             )
 
         # Crear comparación con los cinco métodos

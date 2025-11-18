@@ -142,6 +142,76 @@
             transform: translateX(-5px);
         }
 
+        .comparison-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInDown 0.8s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .comparison-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.5);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .comparison-card h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .comparison-card p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+        }
+
+        .comparison-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -188,6 +258,13 @@
             <h1>Capítulo 2: Sistemas de Ecuaciones Lineales</h1>
             <p>Métodos iterativos para resolver sistemas de ecuaciones</p>
         </div>
+        
+        <!-- Tarjeta de Comparación -->
+        <a href="{% url 'comparison_linear' %}" class="comparison-card">
+            <span class="icon">🔍</span>
+            <h2>Comparación de Métodos</h2>
+            <p>Compara los tres métodos iterativos (Jacobi, Gauss-Seidel y SOR) en una sola ejecución. Obtén análisis comparativo detallado y genera reportes en PDF.</p>
+        </a>
         
         <div class="methods-grid">
             <a href="{% url 'jacobi' %}" class="method-card">

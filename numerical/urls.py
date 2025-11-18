@@ -14,6 +14,10 @@ from numerical.views.lagrange_view import LagrangeView
 from numerical.views.spline_linear_view import SplineLinearView
 from numerical.views.spline_cubic_view import SplineCubicView
 from numerical.views.vandermonde_view import VandermondeView
+from numerical.views.comparison_view import ComparisonView
+from numerical.views.comparison_view2 import ComparisonLinearView
+from numerical.views.comparison3_view import ComparisonViewInterpol
+from numerical.views.file_download_view import FileDownloadView
 
 
 
@@ -32,11 +36,13 @@ urlpatterns = [
     path('cap1/multiple-roots/', MultipleRoots2View.as_view(), name='multiple_roots'),
     path('cap1/fixed-point/', FixedPointView.as_view(), name='fixed_point'),
     path('cap1/newton-raphson/', NewtonRaphsonView.as_view(), name='newton_raphson'),
+    path('cap1/comparison/', ComparisonView.as_view(), name='comparison'),
     
     # Métodos Capítulo 2
     path('cap2/jacobi/', JacobiView.as_view(), name='jacobi'),
     path('cap2/gauss-seidel/', GaussSeidelView.as_view(), name='gauss_seidel'),
     path('cap2/sor/', SORView.as_view(), name='sor'),
+    path('cap2/comparison/', ComparisonLinearView.as_view(), name='comparison_linear'),
     
     # Métodos Capítulo 3
     path('cap3/lagrange/', LagrangeView.as_view(), name='lagrange'),
@@ -44,4 +50,8 @@ urlpatterns = [
     path('cap3/spline-linear/', SplineLinearView.as_view(), name='spline_linear'),
     path('cap3/spline-cubic/', SplineCubicView.as_view(), name='spline_cubic'),
     path('cap3/vandermonde/', VandermondeView.as_view(), name='vandermonde'),
+    path('cap3/comparison/', ComparisonViewInterpol.as_view(), name='comparison_interpol'),
+    
+    # Descarga de archivos
+    path('download/<str:filename>/', FileDownloadView.as_view(), name='download_file'),
 ]

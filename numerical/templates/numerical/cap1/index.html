@@ -1,6 +1,90 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Capítulo 1: Métodos de Intervalo</h1>
-<p>Selecciona un método para empezar (bisección, regla falsa, etc.).</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-danger mb-4">📚 Capitulo 1: Métodos de Búsqueda de Raíces</h1>
+            <p class="lead">Selecciona un método individual o compara todos los métodos.</p>
+        </div>
+    </div>
+
+    <!-- Comparación de Métodos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">🔍 Comparación de Métodos</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Compara los cinco métodos de búsqueda de raíces en una sola ejecución.</p>
+                    <a href="{% url 'comparison' %}" class="btn btn-danger btn-lg">
+                        🚀 Ir a Comparación
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métodos Individuales -->
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-3">📖 Métodos Individuales</h3>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Bisección</h5>
+                    <p class="card-text">Método de bisección para encontrar raíces.</p>
+                    <a href="{% url 'bisection' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Regla Falsa</h5>
+                    <p class="card-text">Método de regla falsa (falsa posición).</p>
+                    <a href="{% url 'regula_falsi' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Punto Fijo</h5>
+                    <p class="card-text">Método de punto fijo para iteraciones.</p>
+                    <a href="{% url 'fixed_point' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Newton-Raphson</h5>
+                    <p class="card-text">Método de Newton-Raphson con derivadas.</p>
+                    <a href="{% url 'newton_raphson' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Secante</h5>
+                    <p class="card-text">Método de la secante sin derivadas.</p>
+                    <a href="{% url 'secant' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Raíces Múltiples</h5>
+                    <p class="card-text">Métodos para raíces múltiples.</p>
+                    <a href="{% url 'multiple_roots' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
