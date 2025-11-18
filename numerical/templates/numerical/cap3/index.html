@@ -1,5 +1,80 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Capítulo 3: Interpolación</h1>
-<p>Vandermonde, Lagrange, Splines…</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-danger mb-4">📚 Capítulo 3: Métodos de Interpolación</h1>
+            <p class="lead">Selecciona un método individual o compara todos los métodos.</p>
+        </div>
+    </div>
+
+    <!-- Comparación de Métodos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">🔍 Comparación de Métodos</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Compara los cinco métodos de interpolación en una sola ejecución.</p>
+                    <a href="{% url 'comparison_interpol' %}" class="btn btn-danger btn-lg">
+                        🚀 Ir a Comparación
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métodos Individuales -->
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-3">📖 Métodos Individuales</h3>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Vandermonde</h5>
+                    <p class="card-text">Interpolación usando matriz de Vandermonde.</p>
+                    <a href="{% url 'vandermonde' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Lagrange</h5>
+                    <p class="card-text">Interpolación de Lagrange.</p>
+                    <a href="{% url 'lagrange' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Newton</h5>
+                    <p class="card-text">Interpolación de Newton (diferencias divididas).</p>
+                    <a href="{% url 'newton_interpol' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Spline Lineal</h5>
+                    <p class="card-text">Interpolación por splines lineales.</p>
+                    <a href="{% url 'spline_linear' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Spline Cúbico</h5>
+                    <p class="card-text">Interpolación por splines cúbicos.</p>
+                    <a href="{% url 'spline_cubic' %}" class="btn btn-outline-danger">Ir al método</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

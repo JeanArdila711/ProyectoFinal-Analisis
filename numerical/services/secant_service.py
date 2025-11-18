@@ -24,16 +24,33 @@ class SecantService(IntervalMethod):
         interval_a = x0
         # interval_b ya viene como parámetro
         
+        # Validar que interval_b no sea None
+        if interval_b is None:
+            return {
+                "message_method": "El método de Secante requiere dos puntos iniciales. Por favor, proporcione interval_b.",
+                "table": {},
+                "is_successful": False,
+                "have_solution": False,
+                "root": 0.0,
+            }
+        
         # Resto del código sigue igual...
         table = {}
         current_iteration = 1
         current_error = math.inf
         
         # Evaluamos la función en los puntos iniciales
-        x = interval_a
-        f_a = eval(str(function_f), {"x": x, "math": math})
-        x = interval_b
-        f_b = eval(str(function_f), {"x": x, "math": math})
+        try:
+            f_a = eval(str(function_f), {"x": interval_a, "math": math})
+            f_b = eval(str(function_f), {"x": interval_b, "math": math})
+        except Exception as e:
+            return {
+                "message_method": f"Error al evaluar la función en los puntos iniciales: {str(e)}.",
+                "table": {},
+                "is_successful": False,
+                "have_solution": False,
+                "root": 0.0,
+            }
 
         # Bucle del método de la secante
         while current_iteration <= max_iterations:
@@ -52,8 +69,7 @@ class SecantService(IntervalMethod):
             Xn = interval_b - (f_b * (interval_b - interval_a) / (f_b - f_a))
             # Evaluamos la función en el nuevo valor aproximado
             try:
-                x = Xn
-                f = eval(function_f)
+                f = eval(str(function_f), {"x": Xn, "math": math})
             except Exception as e:
                 return {
                     "message_method": f"Error al evaluar la función en el punto aproximado: {str(e)}.",
@@ -114,10 +130,8 @@ class SecantService(IntervalMethod):
             interval_b = Xn
             # Re-evaluar las funciones en los nuevos puntos
             try:
-                x = interval_a
-                f_a = eval(function_f)
-                x = interval_b
-                f_b = eval(function_f)
+                f_a = eval(str(function_f), {"x": interval_a, "math": math})
+                f_b = eval(str(function_f), {"x": interval_b, "math": math})
             except Exception as e:
                 return {
                     "message_method": f"Error durante la evaluación en el nuevo intervalo: {str(e)}.",
@@ -150,6 +164,10 @@ class SecantService(IntervalMethod):
         interval_a = x0
         interval_b = kwargs.get("interval_b")
 
+        # Validación de interval_b
+        if interval_b is None:
+            return "El método de Secante requiere dos puntos iniciales. Por favor, proporcione interval_b."
+
         # Validación de los parámetros de entrada tolerancia positiva
         if not isinstance(tolerance, (int, float)) or tolerance <= 0:
             return "La tolerancia debe ser un número positivo"
@@ -161,10 +179,8 @@ class SecantService(IntervalMethod):
         # Evaluamos la función en los puntos iniciales interval_a y interval_b
         
         try:
-            x = interval_a
-            f_a = eval(function_f)
-            x = interval_b
-            f_b = eval(function_f)
+            f_a = eval(str(function_f), {"x": interval_a, "math": math})
+            f_b = eval(str(function_f), {"x": interval_b, "math": math})
         except ValueError as ve:
             plot_function(function_f, False, [(interval_a, 0), (interval_b, 0)]);
             return f"Error de dominio matemático al evaluar la función: {str(ve)}. Asegúrese de que los valores iniciales están en el dominio válido de la función."

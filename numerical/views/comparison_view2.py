@@ -8,7 +8,7 @@ from numerical.services.comparison_service2 import ComparisonService as Comparis
 
 
 class ComparisonLinearView(TemplateView):
-    template_name = "comparison_linear.html"
+    template_name = "numerical/cap2/comparison_linear.html"
 
     @inject
     def __init__(

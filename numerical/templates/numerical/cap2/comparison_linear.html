@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Comparación de Métodos Lineales{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="/" class="text-light">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/numerical/cap2/" class="text-light">Capítulo 2</a></li>
+                    <li class="breadcrumb-item active text-white">Comparación de Métodos</li>
+                </ol>
+            </nav>
+
+            <!-- Título -->
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h1 class="display-4">🔍 Comparación de Métodos Iterativos</h1>
+                    <p class="lead">Compara los métodos iterativos para sistemas lineales: Jacobi, Gauss-Seidel y SOR</p>
+                </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>📖 Descripción</h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Esta herramienta te permite comparar simultáneamente los tres métodos iterativos más utilizados 
+                        para resolver sistemas de ecuaciones lineales. Ingresa la matriz A, el vector b y los parámetros 
+                        una sola vez y obtén resultados comparativos detallados.
+                    </p>
+                    <p>
+                        <strong>Métodos incluidos:</strong> Jacobi, Gauss-Seidel y SOR (Sobrerrelajación Sucesiva).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulario de entrada -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>🔢 Datos de Entrada</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="matrix_size" class="form-label">Tamaño de la Matriz (n×n):</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="matrix_size" 
+                                       name="matrix_size" 
+                                       min="2" 
+                                       max="10"
+                                       placeholder="Ej: 3"
+                                       value="{% if request.POST.matrix_size %}{{ request.POST.matrix_size }}{% elif template_data.form_data.matrix_size %}{{ template_data.form_data.matrix_size }}{% else %}3{% endif %}"
+                                       required>
+                                <small class="form-text text-muted">
+                                    Dimensiones de la matriz cuadrada
+                                </small>
+                            </div>
+                            <div class="col-md-9 mb-3">
+                                <label for="matrix_a_raw" class="form-label">Matriz A:</label>
+                                <input type="text" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="matrix_a_raw" 
+                                       name="matrix_a_raw" 
+                                       placeholder="Ejemplo: 4 -1 1; 4 -8 1; -2 1 5"
+                                       value="{% if request.POST.matrix_a_raw %}{{ request.POST.matrix_a_raw }}{% elif template_data.form_data.matrix_a_raw %}{{ template_data.form_data.matrix_a_raw }}{% endif %}"
+                                       required>
+                                <small class="form-text text-muted">
+                                    Separar elementos por espacios, filas por punto y coma (;). Ejemplo: 4 -1 1; 4 -8 1; -2 1 5
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="vector_b_raw" class="form-label">Vector b (términos independientes):</label>
+                                <input type="text" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="vector_b_raw" 
+                                       name="vector_b_raw" 
+                                       placeholder="Ejemplo: 7 -21 15"
+                                       value="{% if request.POST.vector_b_raw %}{{ request.POST.vector_b_raw }}{% elif template_data.form_data.vector_b_raw %}{{ template_data.form_data.vector_b_raw }}{% endif %}"
+                                       required>
+                                <small class="form-text text-muted">
+                                    Separar valores por espacios. Ejemplo: 7 -21 15
+                                </small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="initial_guess_raw" class="form-label">Vector inicial x₀:</label>
+                                <input type="text" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="initial_guess_raw" 
+                                       name="initial_guess_raw" 
+                                       placeholder="Ejemplo: 0 0 0"
+                                       value="{% if request.POST.initial_guess_raw %}{{ request.POST.initial_guess_raw }}{% elif template_data.form_data.initial_guess_raw %}{{ template_data.form_data.initial_guess_raw }}{% else %}0 0 0{% endif %}"
+                                       required>
+                                <small class="form-text text-muted">
+                                    Separar valores por espacios. Ejemplo: 0 0 0
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="tolerance" class="form-label">Tolerancia:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="tolerance" 
+                                       name="tolerance" 
+                                       step="any"
+                                       placeholder="Ej: 0.0001"
+                                       value="{% if request.POST.tolerance %}{{ request.POST.tolerance }}{% elif template_data.form_data.tolerance %}{{ template_data.form_data.tolerance }}{% else %}0.0001{% endif %}"
+                                       required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="max_iterations" 
+                                       name="max_iterations" 
+                                       placeholder="Ej: 100"
+                                       value="{% if request.POST.max_iterations %}{{ request.POST.max_iterations }}{% elif template_data.form_data.max_iterations %}{{ template_data.form_data.max_iterations }}{% else %}100{% endif %}"
+                                       required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="relaxation_factor" class="form-label">Factor de Relajación ω (SOR):</label>
+                                <input type="number" 
+                                       class="form-control bg-secondary text-white" 
+                                       id="relaxation_factor" 
+                                       name="relaxation_factor" 
+                                       step="any"
+                                       min="0" 
+                                       max="2"
+                                       placeholder="Ej: 1.2"
+                                       value="{% if request.POST.relaxation_factor %}{{ request.POST.relaxation_factor }}{% elif template_data.form_data.relaxation_factor %}{{ template_data.form_data.relaxation_factor }}{% else %}1.2{% endif %}"
+                                       required>
+                                <small class="form-text text-muted">
+                                    Entre 0 y 2. Valores típicos: 1.0-1.5
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="precision_type" class="form-label">Tipo de error:</label>
+                                <select class="form-select bg-secondary text-white" id="precision_type" name="precision_type">
+                                    <option value="0" {% if request.POST.precision_type == '0' or not request.POST.precision_type %}selected{% elif template_data.form_data.precision_type == 0 %}selected{% endif %}>Error relativo</option>
+                                    <option value="1" {% if request.POST.precision_type == '1' %}selected{% elif template_data.form_data.precision_type == 1 %}selected{% endif %}>Error absoluto</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3 d-flex align-items-end">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="generate_pdf" 
+                                           name="generate_pdf"
+                                           {% if request.POST.generate_pdf == 'on' %}checked{% elif template_data.form_data.generate_pdf %}checked{% endif %}>
+                                    <label class="form-check-label" for="generate_pdf">
+                                        <strong>Generar reporte PDF</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🚀 Comparar Métodos
+                        </button>
+                        <a href="{% url 'chapter2' %}" class="btn btn-outline-light btn-lg ms-2">
+                            ← Volver al Capítulo 2
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            {% if template_data.comparison_data %}
+            <div class="card bg-success text-white mb-4">
+                <div class="card-header">
+                    <h3>📊 Resultados Comparativos</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Tabla de Comparación -->
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Método</th>
+                                    <th>Estado</th>
+                                    <th>Iteraciones</th>
+                                    <th>Solución</th>
+                                    <th>Error Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for method in template_data.comparison_data.methods %}
+                                <tr>
+                                    <td><strong>{{ method.method }}</strong></td>
+                                    <td>
+                                        {% if method.status == "Exitoso" %}
+                                            <span class="badge bg-success">{{ method.status }}</span>
+                                        {% elif method.status == "Sin convergencia" %}
+                                            <span class="badge bg-warning text-dark">{{ method.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ method.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ method.iterations }}</td>
+                                    <td>
+                                        {% if method.solution != "N/A" %}
+                                            {% if method.solution|length %}
+                                                <code class="text-white">[{% for val in method.solution %}{{ val|floatformat:4 }}{% if not forloop.last %}, {% endif %}{% endfor %}]</code>
+                                            {% else %}
+                                                {{ method.solution }}
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if method.final_error != "N/A" %}
+                                            {{ method.final_error|scientific:2 }}
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if method.error %}
+                                <tr class="table-warning">
+                                    <td colspan="5" class="text-dark">
+                                        <small><strong>Error:</strong> {{ method.error }}</small>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Análisis Comparativo -->
+                    {% if template_data.comparison_data.analysis and template_data.comparison_data.has_valid_results %}
+                    <div class="mt-4">
+                        <h4 class="mb-3">📈 Análisis Comparativo</h4>
+                        <div class="row g-3 mb-3">
+                            {% if template_data.comparison_data.analysis.most_efficient %}
+                            <div class="col-md-4">
+                                <div class="card bg-dark border-info">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title text-info">⚡ Más Eficiente</h5>
+                                        <p class="card-text h3">{{ template_data.comparison_data.analysis.most_efficient }}</p>
+                                        <small class="text-muted">Menor número de iteraciones</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if template_data.comparison_data.analysis.most_accurate %}
+                            <div class="col-md-4">
+                                <div class="card bg-dark border-success">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title text-success">🎯 Más Preciso</h5>
+                                        <p class="card-text h3">{{ template_data.comparison_data.analysis.most_accurate }}</p>
+                                        <small class="text-muted">Menor error final</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if template_data.comparison_data.analysis.best_overall %}
+                            <div class="col-md-4">
+                                <div class="card bg-dark border-warning">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title text-warning">🏆 Mejor General</h5>
+                                        <p class="card-text h3">{{ template_data.comparison_data.analysis.best_overall }}</p>
+                                        <small class="text-muted">Recomendado</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="alert alert-light">
+                            <h6 class="alert-heading">💡 Conclusión:</h6>
+                            <p class="mb-0">{{ template_data.comparison_data.analysis.summary }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Descarga de PDF -->
+                    {% if template_data.pdf_path %}
+                    <div class="mt-3">
+                        <a href="{% url 'download_file' template_data.pdf_path %}" 
+                           class="btn btn-light btn-lg" target="_blank">
+                            📄 Descargar Reporte PDF
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Ejemplos -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3>💡 Ejemplos</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Ejemplo 1: Sistema 3×3</h5>
+                    <ul>
+                        <li><strong>Matriz A:</strong> 4 -1 1; 4 -8 1; -2 1 5</li>
+                        <li><strong>Vector b:</strong> 7 -21 15</li>
+                        <li><strong>Vector inicial x₀:</strong> 0 0 0</li>
+                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                        <li><strong>Factor ω (SOR):</strong> 1.2</li>
+                    </ul>
+
+                    <h5 class="mt-3">Ejemplo 2: Sistema 2×2</h5>
+                    <ul>
+                        <li><strong>Matriz A:</strong> 4 1; 1 3</li>
+                        <li><strong>Vector b:</strong> 1 2</li>
+                        <li><strong>Vector inicial x₀:</strong> 0 0</li>
+                        <li><strong>Tolerancia:</strong> 0.00001</li>
+                        <li><strong>Factor ω (SOR):</strong> 1.1</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

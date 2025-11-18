@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 
 @method_decorator(inject, name="dispatch")
 class ComparisonViewInterpol(TemplateView):
-    template_name = "comparison3.html"
+    template_name = "numerical/cap3/comparison3.html"
 
     vandermonde_service: InterpolationMethod = Provide[NumericalMethodContainer.vandermonde_service]
     newton_interpol_service: InterpolationMethod = Provide[NumericalMethodContainer.newton_interpol_service]
