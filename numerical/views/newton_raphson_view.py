@@ -1,11 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from numerical.interfaces.iterative_method import (
-    IterativeMethod,
-)
-from numerical.containers.numerical_method_container import (
-    NumericalMethodContainer,
-)
+from numerical.interfaces.iterative_method import IterativeMethod
+from numerical.containers.numerical_method_container import NumericalMethodContainer
 from dependency_injector.wiring import inject, Provide
 from shared.utils.plot_function import plot_function
 from django.http import HttpRequest, HttpResponse
@@ -25,10 +21,13 @@ class NewtonRaphsonView(TemplateView):
         super().__init__(**kwargs)
         self.method_service = method_service
 
+    # ❌ ELIMINÁ TODO EL get_context_data
+    # El context_processor ya inyecta help_content automáticamente
+
     def post(
         self, request: HttpRequest, *args: object, **kwargs: object
     ) -> HttpResponse:
-        context = self.get_context_data()
+        context = self.get_context_data()  # Esto usa el context_processor
         template_data = {}
         x0 = float(request.POST.get("x0"))
         tolerance = float(request.POST.get("tolerance"))
@@ -44,13 +43,13 @@ class NewtonRaphsonView(TemplateView):
         )
 
         if isinstance(response_validation, str):
-            if(response_validation.find("Error al interpretar") != -1 ):
+            if response_validation.find("Error al interpretar") != -1:
                 error_response = {
-                "message_method": response_validation,
-                "table": {},
-                "is_successful": False,
-                "have_solution": False,
-                "root": 0.0,
+                    "message_method": response_validation,
+                    "table": {},
+                    "is_successful": False,
+                    "have_solution": False,
+                    "root": 0.0,
                 }
             else:
                 error_response = {
@@ -71,14 +70,17 @@ class NewtonRaphsonView(TemplateView):
             precision=precision,
             function_f=function_f,
         )
+        
         if method_response["is_successful"]:
             plot_function(
                 function_f,
                 method_response["have_solution"],
                 [(method_response["root"], 0.0)],
             )
+        
         template_data = template_data | method_response
         context["template_data"] = template_data
+        
         if not method_response.get("success", True):
             return render(request, "error_template.html", {
                 "message": method_response["message"],

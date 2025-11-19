@@ -55,80 +55,122 @@
                 </div>
             </div>
 
-            <!-- Formulario de entrada -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3>🔢 Datos de Entrada</h3>
+            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
+            <div class="row">
+                <!-- COLUMNA IZQUIERDA: Guía de Uso CON ACORDEÓN -->
+                <div class="col-lg-5">
+                    {% if help_content %}
+                    <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
+                        <div class="card-header bg-warning text-dark">
+                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                        </div>
+                        <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                            <div class="accordion accordion-flush" id="helpAccordion">
+                                {{ help_content|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label for="function_f" class="form-label">Función f(x):</label>
-                            <input type="text" 
-                                   class="form-control bg-secondary text-white" 
-                                   id="function_f" 
-                                   name="function_f" 
-                                   placeholder="Ejemplo: x**2 - 4"
-                                   value="{{ request.POST.function_f }}"
-                                   required>
-                            <small class="form-text text-muted">
-                                Use notación de Python: ** para potencias, * para multiplicación, math.sin(), math.exp(), etc.
-                                La derivada se calcula automáticamente.
-                            </small>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="x0" class="form-label">Valor inicial x₀:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="x0" 
-                                       name="x0" 
-                                       step="any"
-                                       placeholder="Ej: 1.5"
-                                       value="{{ request.POST.x0 }}"
-                                       required>
-                                <small class="form-text text-muted">Punto de partida (debe estar cerca de la raíz)</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="tolerance" class="form-label">Tolerancia:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="tolerance" 
-                                       name="tolerance" 
-                                       step="any"
-                                       placeholder="Ej: 0.0001"
-                                       value="{{ request.POST.tolerance|default:'0.0001' }}"
-                                       required>
-                            </div>
+                <!-- COLUMNA DERECHA: Formulario de Entrada -->
+                <div class="col-lg-7">
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-header">
+                            <h3>🔢 Datos de Entrada</h3>
                         </div>
+                        <div class="card-body">
+                            <form method="POST" id="newton-form">
+                                {% csrf_token %}
+                                
+                                <!-- FUNCIÓN f(x) -->
+                                <div class="mb-3">
+                                    <label for="function_f" class="form-label">Función f(x):</label>
+                                    <input type="text" 
+                                           class="form-control bg-secondary text-white" 
+                                           id="function_f" 
+                                           name="function_f" 
+                                           placeholder="Ejemplo: x**2 - 4"
+                                           value="{{ request.POST.function_f }}"
+                                           required>
+                                    <small class="form-text text-muted">
+                                        Use notación de Python: ** para potencias, * para multiplicación
+                                    </small>
+                                </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="max_iterations" 
-                                       name="max_iterations" 
-                                       placeholder="Ej: 100"
-                                       value="{{ request.POST.max_iterations|default:'100' }}"
-                                       required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="precision" class="form-label">Tipo de error:</label>
-                                <select class="form-select bg-secondary text-white" id="precision" name="precision">
-                                    <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>Error relativo</option>
-                                    <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>Error absoluto</option>
-                                </select>
-                            </div>
+                                <!-- DERIVADA f'(x) CON BOTÓN AUTOMÁTICO -->
+                                <div class="mb-3">
+                                    <label for="derivative_f" class="form-label">
+                                        Derivada f'(x):
+                                        <button type="button" 
+                                                class="btn btn-sm btn-warning ms-2" 
+                                                id="calc-derivative-btn"
+                                                title="Calcular derivada automáticamente">
+                                            🧮 Calcular Automáticamente
+                                        </button>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control bg-secondary text-white" 
+                                           id="derivative_f" 
+                                           name="derivative_f" 
+                                           placeholder="Ejemplo: 2*x (o haz clic en 'Calcular Automáticamente')"
+                                           value="{{ request.POST.derivative_f }}"
+                                           required>
+                                    <small class="form-text" id="derivative-help"></small>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="x0" class="form-label">Valor inicial x₀:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="x0" 
+                                               name="x0" 
+                                               step="any"
+                                               placeholder="Ej: 1.5"
+                                               value="{{ request.POST.x0 }}"
+                                               required>
+                                        <small class="form-text text-muted">Punto de partida (debe estar cerca de la raíz)</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tolerance" class="form-label">Tolerancia:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="tolerance" 
+                                               name="tolerance" 
+                                               step="any"
+                                               placeholder="Ej: 5e-5"
+                                               value="{{ request.POST.tolerance|default:'5e-5' }}"
+                                               required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="max_iterations" 
+                                               name="max_iterations" 
+                                               placeholder="Ej: 100"
+                                               value="{{ request.POST.max_iterations|default:'100' }}"
+                                               required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="precision" class="form-label">Tipo de error:</label>
+                                        <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                            <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>Error relativo</option>
+                                            <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>Error absoluto</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-danger btn-lg w-100">
+                                    🚀 Calcular Raíz
+                                </button>
+                            </form>
                         </div>
-
-                        <button type="submit" class="btn btn-danger btn-lg">
-                            🚀 Calcular Raíz
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
 
@@ -141,7 +183,7 @@
                 <div class="card-body">
                     <h4>Valor de la raíz:</h4>
                     <div class="bg-dark p-4 rounded mb-3">
-                        <code class="text-white fs-4">x = {{ template_data.root }}</code>
+                        ode class="text-white fsfs-4">x = {{ template_data.root }}</code>
                     </div>
 
                     <h4 class="mt-4">Tabla de Iteraciones:</h4>
@@ -227,7 +269,7 @@
                 <div class="card-body">
                     <p><strong>Fórmula principal:</strong></p>
                     <div class="bg-secondary p-3 rounded text-center mb-3">
-                        <code class="text-white fs-5">
+                        ode class="text-white fs-5-5">
                             x<sub>n+1</sub> = x<sub>n</sub> - f(x<sub>n</sub>) / f'(x<sub>n</sub>)
                         </code>
                     </div>
@@ -268,6 +310,7 @@
                                 <li>Requiere pocas iteraciones (típicamente 3-5)</li>
                                 <li>Alta precisión en la raíz encontrada</li>
                                 <li>Método clásico y bien estudiado</li>
+                                <li>Derivada calculada automáticamente</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
@@ -276,7 +319,7 @@
                                 <li>Requiere calcular la derivada f'(x)</li>
                                 <li>Sensible al punto inicial x₀</li>
                                 <li>Falla si f'(x) = 0 en algún punto</li>
-                                <li>Puede diverger si x₀ está muy lejos</li>
+                                <li>Puede divergir si x₀ está muy lejos</li>
                             </ul>
                         </div>
                     </div>
@@ -292,8 +335,9 @@
                     <h5>Ejemplo 1: Raíz cuadrada (x² - 4 = 0)</h5>
                     <ul>
                         <li><strong>Función:</strong> x**2 - 4</li>
+                        <li><strong>Derivada:</strong> 2*x (calculada automáticamente)</li>
                         <li><strong>x₀:</strong> 1</li>
-                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                        <li><strong>Tolerancia:</strong> 5e-5</li>
                         <li><strong>Raíz esperada:</strong> 2</li>
                         <li><strong>Converge en:</strong> ~3 iteraciones</li>
                     </ul>
@@ -301,24 +345,27 @@
                     <h5 class="mt-3">Ejemplo 2: Función cúbica</h5>
                     <ul>
                         <li><strong>Función:</strong> x**3 - 2*x - 5</li>
+                        <li><strong>Derivada:</strong> 3*x**2 - 2</li>
                         <li><strong>x₀:</strong> 2</li>
-                        <li><strong>Tolerancia:</strong> 0.00001</li>
+                        <li><strong>Tolerancia:</strong> 5e-5</li>
                         <li><strong>Raíz esperada:</strong> ≈ 2.0946</li>
                     </ul>
 
                     <h5 class="mt-3">Ejemplo 3: Función trigonométrica</h5>
                     <ul>
                         <li><strong>Función:</strong> math.cos(x) - x</li>
+                        <li><strong>Derivada:</strong> -math.sin(x) - 1</li>
                         <li><strong>x₀:</strong> 0.5</li>
-                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                        <li><strong>Tolerancia:</strong> 5e-5</li>
                         <li><strong>Raíz esperada:</strong> ≈ 0.7391</li>
                     </ul>
 
                     <h5 class="mt-3">Ejemplo 4: Función exponencial</h5>
                     <ul>
                         <li><strong>Función:</strong> math.exp(x) - 3*x</li>
+                        <li><strong>Derivada:</strong> math.exp(x) - 3</li>
                         <li><strong>x₀:</strong> 1.5</li>
-                        <li><strong>Tolerancia:</strong> 0.0001</li>
+                        <li><strong>Tolerancia:</strong> 5e-5</li>
                     </ul>
                 </div>
             </div>
@@ -332,4 +379,59 @@
         </div>
     </div>
 </div>
+
+<!-- JAVASCRIPT PARA CALCULAR DERIVADA AUTOMÁTICAMENTE -->
+<script>
+document.getElementById('calc-derivative-btn').addEventListener('click', function() {
+    const functionInput = document.getElementById('function_f').value;
+    const derivativeInput = document.getElementById('derivative_f');
+    const helpText = document.getElementById('derivative-help');
+    const button = this;
+    
+    // Validar que haya función
+    if (!functionInput.trim()) {
+        helpText.innerHTML = '⚠️ Por favor ingresa primero la función f(x)';
+        helpText.className = 'form-text text-warning';
+        return;
+    }
+    
+    // Mostrar loading
+    button.innerHTML = '⏳ Calculando...';
+    button.disabled = true;
+    helpText.innerHTML = '';
+    
+    // Llamar al endpoint
+    fetch('/numerical/calculate-derivative/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            function: functionInput,
+            order: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.is_successful) {
+            derivativeInput.value = data.derivative_str;
+            helpText.innerHTML = `✅ ${data.message}`;
+            helpText.className = 'form-text text-success';
+        } else {
+            helpText.innerHTML = `❌ ${data.message}`;
+            helpText.className = 'form-text text-danger';
+        }
+    })
+    .catch(error => {
+        helpText.innerHTML = `❌ Error de conexión: ${error}`;
+        helpText.className = 'form-text text-danger';
+    })
+    .finally(() => {
+        button.innerHTML = '🧮 Calcular Automáticamente';
+        button.disabled = false;
+    });
+});
+</script>
+
 {% endblock %}

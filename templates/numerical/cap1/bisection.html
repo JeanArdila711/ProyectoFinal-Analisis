@@ -53,90 +53,112 @@
                 </div>
             </div>
 
-            <!-- Formulario de entrada -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3>🔢 Datos de Entrada</h3>
+            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
+            <div class="row">
+                <!-- COLUMNA IZQUIERDA: Guía de Uso CON ACORDEÓN -->
+                <div class="col-lg-5">
+                    {% if help_content %}
+                    <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
+                        <div class="card-header bg-warning text-dark">
+                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                        </div>
+                        <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                            <!-- ✅ ACORDEÓN BOOTSTRAP (Todo colapsado por defecto) -->
+                            <div class="accordion accordion-flush" id="helpAccordion">
+                                {{ help_content|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label for="function_f" class="form-label">Función f(x):</label>
-                            <input type="text" 
-                                   class="form-control bg-secondary text-white" 
-                                   id="function_f" 
-                                   name="function_f" 
-                                   placeholder="Ejemplo: x**3 - 2*x - 5"
-                                   value="{{ request.POST.function_f }}"
-                                   required>
-                            <small class="form-text text-muted">
-                                Use notación de Python: ** para potencias, * para multiplicación, math.sin(), math.cos(), math.exp(), etc.
-                            </small>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="interval_a" class="form-label">Intervalo inferior (a):</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="interval_a" 
-                                       name="interval_a" 
-                                       step="any"
-                                       placeholder="Ej: 0"
-                                       value="{{ request.POST.interval_a }}"
-                                       required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="interval_b" class="form-label">Intervalo superior (b):</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="interval_b" 
-                                       name="interval_b" 
-                                       step="any"
-                                       placeholder="Ej: 3"
-                                       value="{{ request.POST.interval_b }}"
-                                       required>
-                            </div>
+                <!-- COLUMNA DERECHA: Formulario de Entrada -->
+                <div class="col-lg-7">
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-header">
+                            <h3>🔢 Datos de Entrada</h3>
                         </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                
+                                <div class="mb-3">
+                                    <label for="function_f" class="form-label">Función f(x):</label>
+                                    <input type="text" 
+                                           class="form-control bg-secondary text-white" 
+                                           id="function_f" 
+                                           name="function_f" 
+                                           placeholder="Ejemplo: x**3 - 2*x - 5"
+                                           value="{{ request.POST.function_f }}"
+                                           required>
+                                    <small class="form-text text-muted">
+                                        Use notación de Python: ** para potencias, * para multiplicación
+                                    </small>
+                                </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="tolerance" class="form-label">Tolerancia:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="tolerance" 
-                                       name="tolerance" 
-                                       step="any"
-                                       placeholder="Ej: 0.0001"
-                                       value="{{ request.POST.tolerance|default:'0.0001' }}"
-                                       required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="max_iterations" 
-                                       name="max_iterations" 
-                                       placeholder="Ej: 100"
-                                       value="{{ request.POST.max_iterations|default:'100' }}"
-                                       required>
-                            </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="interval_a" class="form-label">Intervalo inferior (a):</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="interval_a" 
+                                               name="interval_a" 
+                                               step="any"
+                                               placeholder="Ej: 0"
+                                               value="{{ request.POST.interval_a }}"
+                                               required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="interval_b" class="form-label">Intervalo superior (b):</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="interval_b" 
+                                               name="interval_b" 
+                                               step="any"
+                                               placeholder="Ej: 3"
+                                               value="{{ request.POST.interval_b }}"
+                                               required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tolerance" class="form-label">Tolerancia:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="tolerance" 
+                                               name="tolerance" 
+                                               step="any"
+                                               placeholder="Ej: 0.0001"
+                                               value="{{ request.POST.tolerance|default:'0.0001' }}"
+                                               required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="max_iterations" 
+                                               name="max_iterations" 
+                                               placeholder="Ej: 100"
+                                               value="{{ request.POST.max_iterations|default:'100' }}"
+                                               required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="precision" class="form-label">Tipo de error:</label>
+                                    <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                        <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>Error relativo</option>
+                                        <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>Error absoluto</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-danger btn-lg w-100">
+                                    🚀 Calcular Raíz
+                                </button>
+                            </form>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="precision" class="form-label">Tipo de error:</label>
-                            <select class="form-select bg-secondary text-white" id="precision" name="precision">
-                                <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>Error relativo</option>
-                                <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>Error absoluto</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-danger btn-lg">
-                            🚀 Calcular Raíz
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
 
@@ -149,7 +171,7 @@
                 <div class="card-body">
                     <h4>Valor de la raíz:</h4>
                     <div class="bg-dark p-4 rounded mb-3">
-                        <code class="text-white fs-4">x = {{ template_data.root }}</code>
+                        ode class="text-white fsfs-4">x = {{ template_data.root }}</code>
                     </div>
 
                     <h4 class="mt-4">Tabla de Iteraciones:</h4>
@@ -233,7 +255,7 @@
                     <p><strong>1. Verificar que f(a) × f(b) < 0</strong> (cambio de signo)</p>
                     <p><strong>2. Calcular el punto medio:</strong></p>
                     <div class="bg-secondary p-3 rounded text-center mb-3">
-                        <code class="text-white fs-6">x<sub>n</sub> = (a + b) / 2</code>
+                        ode class="text-whitete fs-6">x<sub>n</sub> = (a + b) / 2</code>
                     </div>
                     <p><strong>3. Evaluar f(x<sub>n</sub>):</strong></p>
                     <ul>

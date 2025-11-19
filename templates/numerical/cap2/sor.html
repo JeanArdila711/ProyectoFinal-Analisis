@@ -60,129 +60,148 @@
                 </div>
             </div>
 
-            <!-- Formulario de entrada -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3>🔢 Datos de Entrada</h3>
+            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario (SIN ACORDEÓN) -->
+            <div class="row">
+                <!-- COLUMNA IZQUIERDA: Guía de Uso FIJA -->
+                <div class="col-lg-5">
+                    {% if help_content %}
+                    <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
+                        <div class="card-header bg-warning text-dark">
+                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                        </div>
+                        <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                            {{ help_content|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        
-                        <!-- Selector de tamaño de matriz -->
-                        <div class="mb-3">
-                            <label for="matrix_size" class="form-label">Tamaño de la matriz:</label>
-                            <select class="form-select bg-secondary text-white" 
-                                    id="matrix_size" 
-                                    name="matrix_size" 
-                                    onchange="updateMatrixSize()" 
-                                    required>
-                                <option value="">-- Selecciona un tamaño --</option>
-                                <option value="2">2x2</option>
-                                <option value="3" selected>3x3</option>
-                                <option value="4">4x4</option>
-                                <option value="5">5x5</option>
-                                <option value="6">6x6</option>
-                                <option value="7">7x7</option>
-                            </select>
-                        </div>
 
-                        <!-- Matriz A -->
-                        <div class="mb-3">
-                            <label for="matrix_a" class="form-label">Matriz A (coeficientes):</label>
-                            <textarea class="form-control bg-secondary text-white font-monospace" 
-                                      id="matrix_a" 
-                                      name="matrix_a" 
-                                      rows="5" 
-                                      placeholder="Ejemplo para 3x3:&#10;4 -1 0&#10;-1 4 -1&#10;0 -1 4"
-                                      required>{{ request.POST.matrix_a }}</textarea>
-                            <small class="form-text text-muted">
-                                Separa cada fila con salto de línea. Separa los números de cada fila con espacios.
-                            </small>
+                <!-- COLUMNA DERECHA: Formulario de Entrada -->
+                <div class="col-lg-7">
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-header">
+                            <h3>🔢 Datos de Entrada</h3>
                         </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                
+                                <!-- Selector de tamaño de matriz -->
+                                <div class="mb-3">
+                                    <label for="matrix_size" class="form-label">Tamaño de la matriz:</label>
+                                    <select class="form-select bg-secondary text-white" 
+                                            id="matrix_size" 
+                                            name="matrix_size" 
+                                            onchange="updateMatrixSize()" 
+                                            required>
+                                        <option value="">-- Selecciona un tamaño --</option>
+                                        <option value="2">2x2</option>
+                                        <option value="3" selected>3x3</option>
+                                        <option value="4">4x4</option>
+                                        <option value="5">5x5</option>
+                                        <option value="6">6x6</option>
+                                        <option value="7">7x7</option>
+                                    </select>
+                                </div>
 
-                        <!-- Vector b -->
-                        <div class="mb-3">
-                            <label for="vector_b" class="form-label">Vector b (términos independientes):</label>
-                            <input type="text" 
-                                   class="form-control bg-secondary text-white font-monospace" 
-                                   id="vector_b" 
-                                   name="vector_b" 
-                                   placeholder="Ejemplo: 15 10 10"
-                                   value="{{ request.POST.vector_b }}"
-                                   required>
-                            <small class="form-text text-muted">Separa los valores con espacios</small>
+                                <!-- Matriz A -->
+                                <div class="mb-3">
+                                    <label for="matrix_a" class="form-label">Matriz A (coeficientes):</label>
+                                    <textarea class="form-control bg-secondary text-white font-monospace" 
+                                              id="matrix_a" 
+                                              name="matrix_a" 
+                                              rows="5" 
+                                              placeholder="Ejemplo para 3x3:&#10;4 -1 0&#10;-1 4 -1&#10;0 -1 4"
+                                              required>{{ request.POST.matrix_a }}</textarea>
+                                    <small class="form-text text-muted">
+                                        Separa cada fila con salto de línea. Separa los números de cada fila con espacios.
+                                    </small>
+                                </div>
+
+                                <!-- Vector b -->
+                                <div class="mb-3">
+                                    <label for="vector_b" class="form-label">Vector b (términos independientes):</label>
+                                    <input type="text" 
+                                           class="form-control bg-secondary text-white font-monospace" 
+                                           id="vector_b" 
+                                           name="vector_b" 
+                                           placeholder="Ejemplo: 15 10 10"
+                                           value="{{ request.POST.vector_b }}"
+                                           required>
+                                    <small class="form-text text-muted">Separa los valores con espacios</small>
+                                </div>
+
+                                <!-- Vector inicial x0 -->
+                                <div class="mb-3">
+                                    <label for="initial_guess" class="form-label">Vector inicial x₀:</label>
+                                    <input type="text" 
+                                           class="form-control bg-secondary text-white font-monospace" 
+                                           id="initial_guess" 
+                                           name="initial_guess" 
+                                           placeholder="Ejemplo: 0 0 0"
+                                           value="{{ request.POST.initial_guess }}"
+                                           required>
+                                    <small class="form-text text-muted">Vector de aproximación inicial (típicamente ceros)</small>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tolerance" class="form-label">Tolerancia:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="tolerance" 
+                                               name="tolerance" 
+                                               step="0.00001"
+                                               placeholder="Ej: 5e-5"
+                                               value="{{ request.POST.tolerance|default:'5e-5' }}"
+                                               required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="max_iterations" 
+                                               name="max_iterations" 
+                                               placeholder="Ej: 100"
+                                               value="{{ request.POST.max_iterations|default:'100' }}"
+                                               required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="relaxation_factor" class="form-label">Factor de relajación ω:</label>
+                                        <input type="number" 
+                                               class="form-control bg-secondary text-white" 
+                                               id="relaxation_factor" 
+                                               name="relaxation_factor" 
+                                               step="0.01"
+                                               min="0.01"
+                                               max="1.99"
+                                               placeholder="Ej: 1.5"
+                                               value="{{ request.POST.relaxation_factor|default:'1.5' }}"
+                                               required>
+                                        <small class="form-text text-muted">Rango: 0 < ω < 2 (típico: 1.5)</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="precision" class="form-label">Tipo de precisión:</label>
+                                        <select class="form-select bg-secondary text-white" id="precision" name="precision">
+                                            <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>
+                                                Decimales correctos
+                                            </option>
+                                            <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>
+                                                Cifras significativas
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-danger btn-lg w-100">
+                                    🚀 Resolver Sistema
+                                </button>
+                            </form>
                         </div>
-
-                        <!-- Vector inicial x0 -->
-                        <div class="mb-3">
-                            <label for="initial_guess" class="form-label">Vector inicial x₀:</label>
-                            <input type="text" 
-                                   class="form-control bg-secondary text-white font-monospace" 
-                                   id="initial_guess" 
-                                   name="initial_guess" 
-                                   placeholder="Ejemplo: 0 0 0"
-                                   value="{{ request.POST.initial_guess }}"
-                                   required>
-                            <small class="form-text text-muted">Vector de aproximación inicial (típicamente ceros)</small>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="tolerance" class="form-label">Tolerancia:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="tolerance" 
-                                       name="tolerance" 
-                                       step="0.00001"
-                                       placeholder="Ej: 5e-5"
-                                       value="{{ request.POST.tolerance|default:'0.00005' }}"
-                                       required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="max_iterations" class="form-label">Iteraciones máximas:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="max_iterations" 
-                                       name="max_iterations" 
-                                       placeholder="Ej: 100"
-                                       value="{{ request.POST.max_iterations|default:'100' }}"
-                                       required>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="relaxation_factor" class="form-label">Factor de relajación ω:</label>
-                                <input type="number" 
-                                       class="form-control bg-secondary text-white" 
-                                       id="relaxation_factor" 
-                                       name="relaxation_factor" 
-                                       step="0.01"
-                                       min="0.01"
-                                       max="1.99"
-                                       placeholder="Ej: 1.5"
-                                       value="{{ request.POST.relaxation_factor|default:'1.5' }}"
-                                       required>
-                                <small class="form-text text-muted">Rango: 0 < ω < 2 (típico: 1.5)</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="precision" class="form-label">Tipo de precisión:</label>
-                                <select class="form-select bg-secondary text-white" id="precision" name="precision">
-                                    <option value="1" {% if request.POST.precision == '1' %}selected{% endif %}>
-                                        Decimales correctos
-                                    </option>
-                                    <option value="0" {% if request.POST.precision == '0' %}selected{% endif %}>
-                                        Cifras significativas
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-danger btn-lg">
-                            🚀 Resolver Sistema
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
 
@@ -197,7 +216,7 @@
                         <div class="col-md-6">
                             <h5>Vector solución:</h5>
                             <div class="bg-dark p-3 rounded">
-                                <code class="text-white">
+                                ode class="text-whitete">
                                     {% for value in template_data.solution %}
                                         x<sub>{{ forloop.counter }}</sub> = {{ value|floatformat:6 }}
                                         {% if not forloop.last %}<br>{% endif %}
@@ -303,7 +322,7 @@
                 <div class="card-body">
                     <p><strong>Fórmula iterativa con factor de relajación:</strong></p>
                     <div class="bg-secondary p-3 rounded text-center mb-3">
-                        <code class="text-white fs-6">
+                        ode class="text-white fsfs-6">
                             x<sub>i</sub><sup>(k+1)</sup> = (1 - ω)x<sub>i</sub><sup>(k)</sup> + (ω/a<sub>ii</sub>)(b<sub>i</sub> - Σ<sub>j&lt;i</sub> a<sub>ij</sub>x<sub>j</sub><sup>(k+1)</sup> - Σ<sub>j&gt;i</sub> a<sub>ij</sub>x<sub>j</sub><sup>(k)</sup>)
                         </code>
                     </div>
@@ -352,6 +371,7 @@
                         <li><strong>b:</strong> 15 10 10</li>
                         <li><strong>x₀:</strong> 0 0 0</li>
                         <li><strong>ω:</strong> 1.5 (acelera SOR)</li>
+                        <li><strong>Tolerancia:</strong> 5e-5</li>
                         <li><strong>Nota:</strong> Converge más rápido que Gauss-Seidel</li>
                     </ul>
 
@@ -361,6 +381,7 @@
                         <li><strong>b:</strong> 11 11</li>
                         <li><strong>x₀:</strong> 0 0</li>
                         <li><strong>ω:</strong> 1.0 (Gauss-Seidel puro)</li>
+                        <li><strong>Tolerancia:</strong> 5e-5</li>
                     </ul>
                 </div>
             </div>

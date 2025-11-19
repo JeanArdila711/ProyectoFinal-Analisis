@@ -18,6 +18,7 @@ from numerical.views.comparison_view import ComparisonView
 from numerical.views.comparison_view2 import ComparisonLinearView
 from numerical.views.comparison3_view import ComparisonViewInterpol
 from numerical.views.file_download_view import FileDownloadView
+from numerical.views.derivate_view import DerivativeCalculatorView
 
 
 
@@ -54,4 +55,7 @@ urlpatterns = [
     
     # Descarga de archivos
     path('download/<str:filename>/', FileDownloadView.as_view(), name='download_file'),
+
+    # Derivadas
+    path('calculate-derivative/', DerivativeCalculatorView.as_view(), name='calculate_derivative'),
 ]
