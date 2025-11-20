@@ -26,11 +26,11 @@
             {% if template_data %}
                 {% if template_data.is_successful %}
                     <div class="alert alert-success" role="alert">
-                        <strong>✅ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% else %}
                     <div class="alert alert-danger" role="alert">
-                        <strong>❌ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% endif %}
             {% endif %}
@@ -38,7 +38,7 @@
             <!-- Descripción del método -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📖 Descripción</h3>
+                    <h3> Descripción</h3>
                 </div>
                 <div class="card-body">
                     <p>
@@ -54,14 +54,14 @@
                 </div>
             </div>
 
-            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
+            <!--  LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
             <div class="row">
                 <!-- COLUMNA IZQUIERDA: Guía de Uso CON ACORDEÓN -->
                 <div class="col-lg-5">
                     {% if help_content %}
                     <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
                         <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                            <h4 class="mb-0"> Guía de Uso</h4>
                         </div>
                         <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                             <div class="accordion accordion-flush" id="helpAccordion">
@@ -76,7 +76,7 @@
                 <div class="col-lg-7">
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-header">
-                            <h3>🔢 Datos de Entrada</h3>
+                            <h3> Datos de Entrada</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST">
@@ -154,7 +154,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
-                                    🚀 Calcular Raíz
+                                     Calcular Raíz
                                 </button>
                             </form>
                         </div>
@@ -166,7 +166,7 @@
             {% if template_data.have_solution %}
             <div class="card bg-success text-white mb-4">
                 <div class="card-header">
-                    <h3>✅ Raíz Encontrada</h3>
+                    <h3> Raíz Encontrada</h3>
                 </div>
                 <div class="card-body">
                     <h4>Valor de la raíz:</h4>
@@ -209,7 +209,7 @@
             <!-- Gráfica -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Visualización</h3>
+                    <h3> Visualización</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
@@ -222,7 +222,7 @@
             <!-- Sin solución pero método funcionó -->
             <div class="card bg-warning text-dark mb-4">
                 <div class="card-body">
-                    <h4>⚠️ No se encontró raíz</h4>
+                    <h4> No se encontró raíz</h4>
                     <p>El método funcionó correctamente pero no convergió con los parámetros dados. Intenta:</p>
                     <ul>
                         <li>Aumentar el número de iteraciones</li>
@@ -236,7 +236,7 @@
             <!-- Fórmula matemática -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📐 Fórmula de Regla Falsa</h3>
+                    <h3> Fórmula de Regla Falsa</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Fórmula principal:</strong></p>
@@ -265,12 +265,12 @@
             <!-- Comparación con Bisección -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>⚖️ Ventajas vs Bisección</h3>
+                    <h3> Ventajas vs Bisección</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h5 class="text-success">✅ Ventajas</h5>
+                            <h5 class="text-success"> Ventajas</h5>
                             <ul>
                                 <li>Generalmente converge más rápido</li>
                                 <li>Usa información sobre la pendiente</li>
@@ -278,7 +278,7 @@
                             </ul>
                         </div>
                         <div class="col-md-6">
-                            <h5 class="text-warning">⚠️ Desventajas</h5>
+                            <h5 class="text-warning"> Desventajas</h5>
                             <ul>
                                 <li>Puede ser lenta en funciones muy curvas</li>
                                 <li>No siempre reduce el intervalo uniformemente</li>
@@ -292,7 +292,7 @@
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>💡 Ejemplos</h3>
+                    <h3> Ejemplos</h3>
                 </div>
                 <div class="card-body">
                     <h5>Ejemplo 1: Polinomio cúbico</h5>

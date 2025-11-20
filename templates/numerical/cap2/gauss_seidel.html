@@ -26,7 +26,7 @@
             {% if template_data.message_method %}
                 {% if template_data.is_successful %}
                     <div class="alert alert-success" role="alert">
-                        <strong>✅ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                         {% if template_data.spectral_radius %}
                             <br><small>Radio espectral: {{ template_data.spectral_radius|floatformat:10 }}</small>
                         {% endif %}
@@ -41,7 +41,7 @@
             <!-- Descripción del método -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📖 Descripción</h3>
+                    <h3> Descripción</h3>
                 </div>
                 <div class="card-body">
                     <p>
@@ -57,14 +57,14 @@
                 </div>
             </div>
 
-            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario (SIN ACORDEÓN) -->
+            <!--  LAYOUT DE 2 COLUMNAS: Guía + Formulario (SIN ACORDEÓN) -->
             <div class="row">
                 <!-- COLUMNA IZQUIERDA: Guía de Uso FIJA -->
                 <div class="col-lg-5">
                     {% if help_content %}
                     <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
                         <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                            <h4 class="mb-0">Guía de Uso</h4>
                         </div>
                         <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                             {{ help_content|safe }}
@@ -77,7 +77,7 @@
                 <div class="col-lg-7">
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-header">
-                            <h3>🔢 Datos de Entrada</h3>
+                            <h3> Datos de Entrada</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST">
@@ -179,7 +179,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
-                                    🚀 Resolver Sistema
+                                    Resolver Sistema
                                 </button>
                             </form>
                         </div>
@@ -191,7 +191,7 @@
             {% if template_data.have_solution %}
             <div class="card bg-success text-white mb-4">
                 <div class="card-header">
-                    <h3>✅ Solución Encontrada</h3>
+                    <h3> Solución Encontrada</h3>
                 </div>
                 <div class="card-body">
                     <h4>Vector solución:</h4>
@@ -242,7 +242,7 @@
                 <div class="col-md-6 mb-4">
                     <div class="card bg-dark text-white">
                         <div class="card-header">
-                            <h3>📊 Convergencia</h3>
+                            <h3>Convergencia</h3>
                         </div>
                         <div class="card-body text-center">
                             <img src="{% static 'img/numerical_method/matrix_solution_plot.svg' %}" 
@@ -254,7 +254,7 @@
                 <div class="col-md-6 mb-4">
                     <div class="card bg-dark text-white">
                         <div class="card-header">
-                            <h3>📈 Sistema de Ecuaciones</h3>
+                            <h3> Sistema de Ecuaciones</h3>
                         </div>
                         <div class="card-body text-center">
                             <img src="{% static 'img/numerical_method/system_plot.svg' %}" 
@@ -269,7 +269,7 @@
             {% elif template_data.is_successful and not template_data.have_solution %}
             <div class="card bg-warning text-dark mb-4">
                 <div class="card-body">
-                    <h4>⚠️ No se encontró solución</h4>
+                    <h4> No se encontró solución</h4>
                     <p>{{ template_data.message_method }}</p>
                     <p><strong>Posibles causas:</strong></p>
                     <ul>
@@ -284,7 +284,7 @@
             <!-- Fórmula matemática -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📐 Fórmula de Gauss-Seidel</h3>
+                    <h3> Fórmula de Gauss-Seidel</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Fórmula iterativa:</strong></p>
@@ -303,7 +303,7 @@
             <!-- Comparación con Jacobi -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>⚖️ Gauss-Seidel vs Jacobi</h3>
+                    <h3> Gauss-Seidel vs Jacobi</h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -340,7 +340,7 @@
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>💡 Ejemplos</h3>
+                    <h3> Ejemplos</h3>
                 </div>
                 <div class="card-body">
                     <h5>Ejemplo 1: Sistema 3x3</h5>

@@ -2,7 +2,6 @@ import numpy as np
 from numerical.interfaces.matrix_method import MatrixMethod
 from shared.utils.plot_matrix_solution import plot_matrix_solution, plot_system_equations
 
-
 class JacobiService(MatrixMethod):
     def solve(
         self,
@@ -11,7 +10,6 @@ class JacobiService(MatrixMethod):
         x0: list[float],
         tolerance: float,
         max_iterations: int,
-        precision_type: str = "decimales_correctos",
         **kwargs,
     ) -> dict:
 
@@ -21,14 +19,13 @@ class JacobiService(MatrixMethod):
 
         n = len(b)
         x1 = np.zeros_like(x0)
-        current_error = tolerance + 1
+        current_error_rel = tolerance + 1
+        current_error_abs = tolerance + 1
         current_iteration = 0
         table = {}
-        warnings = []  # ✅ NUEVO: Lista de advertencias
+        warnings = []
 
-        # ========================================
-        # ✅ VALIDACIÓN 1: Diagonal no nula (verificación adicional)
-        # ========================================
+        # Diagonal no nula
         for i in range(n):
             if abs(A[i, i]) < 1e-12:
                 return {
@@ -40,38 +37,28 @@ class JacobiService(MatrixMethod):
                     "spectral_radius": None,
                 }
 
-        # ========================================
-        # ✅ VALIDACIÓN 2: Dominancia diagonal (advertencia, no error)
-        # ========================================
+        # Dominancia diagonal advertencia
         for i in range(n):
             diagonal = abs(A[i, i])
             suma_fila = sum(abs(A[i, j]) for j in range(n) if j != i)
-            
             if diagonal <= suma_fila:
                 warnings.append(
                     f"⚠️ Fila {i+1}: |a[{i+1}][{i+1}]| = {diagonal:.4f} ≤ suma_otros = {suma_fila:.4f}. "
                     "La matriz NO es estrictamente diagonalmente dominante. El método puede no converger."
                 )
 
-        # ========================================
-        # Cálculo de la matriz de iteración T y radio espectral
-        # ========================================
+        # Matriz de iteración T y radio espectral
         try:
             D = np.diag(np.diag(A))
             L = np.tril(A, -1)
             U = np.triu(A, 1)
-
-            # Matriz de iteración T para Jacobi
             T = np.linalg.inv(D).dot(L + U)
             spectral_radius = max(abs(np.linalg.eigvals(T)))
-            
-            # ✅ Advertencia si radio espectral >= 1
             if spectral_radius >= 1:
                 warnings.append(
                     f"⚠️ Radio espectral = {spectral_radius:.6f} ≥ 1. "
                     "El método NO convergerá. Verifica que la matriz sea diagonalmente dominante."
                 )
-
         except np.linalg.LinAlgError:
             return {
                 "message_method": "❌ Error: No se pudo calcular la matriz de iteración. La matriz D es singular.",
@@ -82,34 +69,28 @@ class JacobiService(MatrixMethod):
                 "spectral_radius": None,
             }
 
-        # ========================================
-        # Iteración de Jacobi con manejo de excepciones
-        # ========================================
+        # Iteración Jacobi
         try:
-            while current_error > tolerance and current_iteration < max_iterations:
-                # Iteración de Jacobi
+            while current_error_rel > tolerance and current_iteration < max_iterations:
                 for i in range(n):
-                    # ✅ Validación adicional durante iteración
                     if abs(A[i, i]) < 1e-14:
                         raise ValueError(f"Diagonal a[{i+1}][{i+1}] se volvió cero durante la iteración {current_iteration}")
-                    
                     sum_others = np.dot(A[i, :i], x0[:i]) + np.dot(A[i, i + 1:], x0[i + 1:])
                     x1[i] = (b[i] - sum_others) / A[i, i]
 
-                current_error = np.linalg.norm(x1 - x0, ord=np.inf)
+                # Calcula ambos errores
+                current_error_abs = np.linalg.norm(x1 - x0, ord=np.inf)
+                div = np.where(np.abs(x1) > 1e-15, np.abs(x1), 1e-15)
+                current_error_rel = np.linalg.norm((x1 - x0) / div, ord=np.inf)
 
-                # Aplicar precisión según el tipo seleccionado
-                formatted_x1 = self.apply_precision(x1.tolist(), precision_type, tolerance)
-                formatted_error = self.apply_precision([current_error], precision_type, tolerance)[0]
-
-                # Guardamos la información de la iteración actual
+                # Guarda ambos errores
                 table[current_iteration + 1] = {
                     "iteration": current_iteration + 1,
-                    "X": formatted_x1,
-                    "Error": formatted_error,
+                    "X": x1.tolist(),
+                    "Error": current_error_rel,
+                    "ErrorAbsoluto": current_error_abs,
                 }
 
-                # Preparación para la siguiente iteración
                 x0 = x1.copy()
                 current_iteration += 1
 
@@ -124,41 +105,34 @@ class JacobiService(MatrixMethod):
                 "warnings": warnings,
             }
 
-        # ========================================
         # Resultados finales
-        # ========================================
         result = {}
-        
-        if current_error <= tolerance:
+        if current_error_rel <= tolerance:
             message = f"✅ Aproximación encontrada con tolerancia = {tolerance}"
             if warnings:
                 message += f"\n\n⚠️ ADVERTENCIAS:\n" + "\n".join(warnings)
-            
             result = {
                 "message_method": message,
                 "table": table,
                 "is_successful": True,
                 "have_solution": True,
-                "solution": formatted_x1,
+                "solution": x1.tolist(),
                 "spectral_radius": spectral_radius,
                 "warnings": warnings,
             }
-        
         elif current_iteration >= max_iterations:
-            message = f"⚠️ Se alcanzaron {max_iterations} iteraciones sin convergencia (error final = {current_error:.2e}, radio espectral = {spectral_radius:.6f})"
+            message = f"⚠️ Se alcanzaron {max_iterations} iteraciones sin convergencia (error relativo = {current_error_rel:.2e}, radio espectral = {spectral_radius:.6f})"
             if warnings:
                 message += f"\n\nPosibles causas:\n" + "\n".join(warnings)
-            
             result = {
                 "message_method": message,
                 "table": table,
                 "is_successful": True,
                 "have_solution": False,
-                "solution": formatted_x1,
+                "solution": x1.tolist(),
                 "spectral_radius": spectral_radius,
                 "warnings": warnings,
             }
-        
         else:
             result = {
                 "message_method": "❌ El método falló al intentar aproximar una solución",
@@ -170,7 +144,7 @@ class JacobiService(MatrixMethod):
                 "warnings": warnings,
             }
 
-        # Generar gráficas para 2x2
+        # Gráficas 2x2
         if len(A) == 2 and result["have_solution"]:
             try:
                 plot_matrix_solution(table, x1.tolist(), spectral_radius)
@@ -180,18 +154,7 @@ class JacobiService(MatrixMethod):
 
         return result
 
-    def apply_precision(self, values, precision_type, tolerance):
-        """
-        Aplica precisión a una lista de valores basada en el tipo de precisión seleccionado.
-        """
-        if precision_type == "cifras_significativas":
-            significant_figures = -int(np.floor(np.log10(tolerance)))
-            return [round(value, significant_figures) for value in values]
-        elif precision_type == "decimales_correctos":
-            decimal_places = -int(np.floor(np.log10(tolerance)))
-            return [round(value, decimal_places) for value in values]
-        else:
-            return values
+    # validate_input igual que antes, sin cambios.
 
     def validate_input(
         self,

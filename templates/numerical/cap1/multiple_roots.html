@@ -26,11 +26,11 @@
             {% if template_data %}
                 {% if template_data.is_successful %}
                     <div class="alert alert-success" role="alert">
-                        <strong>✅ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% else %}
                     <div class="alert alert-danger" role="alert">
-                        <strong>❌ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% endif %}
             {% endif %}
@@ -38,7 +38,7 @@
             <!-- Descripción del método -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📖 Descripción</h3>
+                    <h3> Descripción</h3>
                 </div>
                 <div class="card-body">
                     <p>
@@ -52,21 +52,21 @@
                         de antemano.
                     </p>
                     <div class="alert alert-info mt-3">
-                        <strong>📌 Ejemplo de raíz múltiple:</strong><br>
+                        <strong> Ejemplo de raíz múltiple:</strong><br>
                         f(x) = (x - 2)³ tiene una raíz triple en x = 2<br>
                         f(x) = x² - 4x + 4 = (x - 2)² tiene una raíz doble en x = 2
                     </div>
                 </div>
             </div>
 
-            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
+            <!--  LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
             <div class="row">
                 <!-- COLUMNA IZQUIERDA: Guía de Uso CON ACORDEÓN -->
                 <div class="col-lg-5">
                     {% if help_content %}
                     <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
                         <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                            <h4 class="mb-0">Guía de Uso</h4>
                         </div>
                         <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                             <div class="accordion accordion-flush" id="helpAccordion">
@@ -81,7 +81,7 @@
                 <div class="col-lg-7">
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-header">
-                            <h3>🔢 Datos de Entrada</h3>
+                            <h3> Datos de Entrada</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST" id="multiple-roots-form">
@@ -110,7 +110,7 @@
                                                 class="btn btn-sm btn-warning ms-2" 
                                                 id="calc-first-derivative-btn"
                                                 title="Calcular f'(x) automáticamente">
-                                            🧮 Calcular f'(x)
+                                             Calcular f'(x)
                                         </button>
                                     </label>
                                     <input type="text" 
@@ -131,7 +131,7 @@
                                                 class="btn btn-sm btn-info ms-2" 
                                                 id="calc-second-derivative-btn"
                                                 title="Calcular f''(x) automáticamente">
-                                            🧮 Calcular f''(x)
+                                             Calcular f''(x)
                                         </button>
                                     </label>
                                     <input type="text" 
@@ -190,7 +190,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
-                                    🚀 Calcular Raíz
+                                     Calcular Raíz
                                 </button>
                             </form>
                         </div>
@@ -202,7 +202,7 @@
             {% if template_data.have_solution %}
             <div class="card bg-success text-white mb-4">
                 <div class="card-header">
-                    <h3>✅ Raíz Encontrada</h3>
+                    <h3> Raíz Encontrada</h3>
                 </div>
                 <div class="card-body">
                     <h4>Valor de la raíz:</h4>
@@ -251,7 +251,7 @@
             <!-- Gráfica -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Visualización</h3>
+                    <h3> Visualización</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
@@ -272,7 +272,7 @@
             <!-- Fórmula matemática -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📐 Fórmula del Método</h3>
+                    <h3> Fórmula del Método</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Fórmula modificada:</strong></p>
@@ -290,7 +290,7 @@
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>💡 Ejemplos</h3>
+                    <h3> Ejemplos</h3>
                 </div>
                 <div class="card-body">
                     <h5>Ejemplo 1: Raíz triple</h5>
@@ -336,7 +336,7 @@ function calculateDerivative(order, inputId, helpId, buttonId) {
     
     // Validar que haya función
     if (!functionInput.trim()) {
-        helpText.innerHTML = '⚠️ Por favor ingresa primero la función f(x)';
+        helpText.innerHTML = ' Por favor ingresa primero la función f(x)';
         helpText.className = 'form-text text-warning';
         return;
     }
@@ -363,15 +363,15 @@ function calculateDerivative(order, inputId, helpId, buttonId) {
     .then(data => {
         if (data.is_successful) {
             derivativeInput.value = data.derivative_str;
-            helpText.innerHTML = `✅ ${data.message}`;
+            helpText.innerHTML = ` ${data.message}`;
             helpText.className = 'form-text text-success';
         } else {
-            helpText.innerHTML = `❌ ${data.message}`;
+            helpText.innerHTML = ` ${data.message}`;
             helpText.className = 'form-text text-danger';
         }
     })
     .catch(error => {
-        helpText.innerHTML = `❌ Error de conexión: ${error}`;
+        helpText.innerHTML = ` Error de conexión: ${error}`;
         helpText.className = 'form-text text-danger';
     })
     .finally(() => {

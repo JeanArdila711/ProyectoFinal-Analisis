@@ -5,7 +5,6 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
-
 class ComparisonService:
 
     def create_comparison(self, gauss_result, jacobi_result, sor_result, gauss_validation, jacobi_validation, sor_validation):
@@ -36,20 +35,26 @@ class ComparisonService:
                 "error": validation,
                 "iterations": "N/A",
                 "solution": "N/A",
-                "final_error": "N/A"
+                "final_error_rel": "N/A",
+                "final_error_abs": "N/A",
+                "spectral_radius": "N/A"
             })
 
     def _process_result(self, method_name, result):
         iterations = len(result.get("table", {}))
         last = result["table"].get(iterations, {})
-        final_error = last.get("Error", "N/A")
+        final_error_rel = last.get("Error", "N/A")
+        final_error_abs = last.get("ErrorAbsoluto", "N/A")
+        spectral_radius = result.get("spectral_radius", "N/A")  # Ajusta la clave si tu resultado la llama distinto
 
         return {
             "method": method_name,
             "status": "Exitoso" if result.get("have_solution") else "Sin convergencia",
             "iterations": iterations,
             "solution": result.get("solution", "N/A"),
-            "final_error": final_error,
+            "final_error_rel": final_error_rel,
+            "final_error_abs": final_error_abs,
+            "spectral_radius": spectral_radius,
             "message": result.get("message_method", ""),
             "have_solution": result.get("have_solution", False)
         }
@@ -70,9 +75,9 @@ class ComparisonService:
 
         analysis["most_efficient"] = min(successful, key=lambda x: x["iterations"])["method"]
 
-        with_error = [m for m in successful if isinstance(m["final_error"], (int, float))]
+        with_error = [m for m in successful if isinstance(m["final_error_rel"], (int, float))]
         if with_error:
-            analysis["most_accurate"] = min(with_error, key=lambda x: abs(x["final_error"]))["method"]
+            analysis["most_accurate"] = min(with_error, key=lambda x: abs(x["final_error_rel"]))["method"]
 
         if len(successful) == 1:
             analysis["best_overall"] = successful[0]["method"]
@@ -133,16 +138,25 @@ class ComparisonService:
         story.append(Spacer(1, 20))
 
         story.append(Paragraph("RESULTADOS COMPARATIVOS", styles['Heading2']))
-        results = [["Método", "Estado", "Iteraciones", "Solución", "Error final"]]
+        results = [["Método", "Estado", "Iteraciones", "Solución", "Error relativo", "Error absoluto", "Radio espectral"]]
         for method in comparison_data["methods"]:
             sol_str = ", ".join(f"{v:.4f}" for v in method["solution"]) if isinstance(method["solution"], list) else str(method["solution"])
-            err_str = f"{method['final_error']:.2e}" if isinstance(method["final_error"], (int, float)) else str(method["final_error"])
+            err_rel = f"{method.get('final_error_rel', 'N/A'):.2e}" if isinstance(method.get("final_error_rel"), (int, float)) else str(method.get("final_error_rel", 'N/A'))
+            err_abs = f"{method.get('final_error_abs', 'N/A'):.2e}" if isinstance(method.get("final_error_abs"), (int, float)) else str(method.get("final_error_abs", 'N/A'))
+            radius = method.get("spectral_radius", "N/A")
+            if isinstance(radius, float):
+                if radius < 1:
+                    radius = f"{radius:.3f} (<1, Converge)"
+                else:
+                    radius = f"{radius:.3f} (>=1, No converge)"
             results.append([
                 method["method"],
                 method["status"],
                 str(method["iterations"]),
                 sol_str,
-                err_str
+                err_rel,
+                err_abs,
+                str(radius)
             ])
         table = Table(results)
         table.setStyle(TableStyle([

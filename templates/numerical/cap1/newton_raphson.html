@@ -26,11 +26,11 @@
             {% if template_data %}
                 {% if template_data.is_successful %}
                     <div class="alert alert-success" role="alert">
-                        <strong>✅ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% else %}
                     <div class="alert alert-danger" role="alert">
-                        <strong>❌ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% endif %}
             {% endif %}
@@ -38,7 +38,7 @@
             <!-- Descripción del método -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📖 Descripción</h3>
+                    <h3> Descripción</h3>
                 </div>
                 <div class="card-body">
                     <p>
@@ -55,14 +55,14 @@
                 </div>
             </div>
 
-            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
+            <!--  LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
             <div class="row">
                 <!-- COLUMNA IZQUIERDA: Guía de Uso CON ACORDEÓN -->
                 <div class="col-lg-5">
                     {% if help_content %}
                     <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
                         <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                            <h4 class="mb-0">Guía de Uso</h4>
                         </div>
                         <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                             <div class="accordion accordion-flush" id="helpAccordion">
@@ -77,7 +77,7 @@
                 <div class="col-lg-7">
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-header">
-                            <h3>🔢 Datos de Entrada</h3>
+                            <h3> Datos de Entrada</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST" id="newton-form">
@@ -106,7 +106,7 @@
                                                 class="btn btn-sm btn-warning ms-2" 
                                                 id="calc-derivative-btn"
                                                 title="Calcular derivada automáticamente">
-                                            🧮 Calcular Automáticamente
+                                             Calcular Automáticamente
                                         </button>
                                     </label>
                                     <input type="text" 
@@ -166,7 +166,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
-                                    🚀 Calcular Raíz
+                                     Calcular Raíz
                                 </button>
                             </form>
                         </div>
@@ -178,7 +178,7 @@
             {% if template_data.have_solution %}
             <div class="card bg-success text-white mb-4">
                 <div class="card-header">
-                    <h3>✅ Raíz Encontrada</h3>
+                    <h3> Raíz Encontrada</h3>
                 </div>
                 <div class="card-body">
                     <h4>Valor de la raíz:</h4>
@@ -219,7 +219,7 @@
             <!-- Gráfica -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Visualización</h3>
+                    <h3> Visualización</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
@@ -235,7 +235,7 @@
             <!-- Sin solución pero método funcionó -->
             <div class="card bg-warning text-dark mb-4">
                 <div class="card-body">
-                    <h4>⚠️ No se encontró raíz</h4>
+                    <h4> No se encontró raíz</h4>
                     <p>{{ template_data.message_method }}</p>
                     <p><strong>Posibles causas:</strong></p>
                     <ul>
@@ -250,7 +250,7 @@
             <!-- Gráfica -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Visualización</h3>
+                    <h3> Visualización</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
@@ -264,7 +264,7 @@
             <!-- Fórmula matemática -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📐 Fórmula de Newton-Raphson</h3>
+                    <h3> Fórmula de Newton-Raphson</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Fórmula principal:</strong></p>
@@ -299,12 +299,12 @@
             <!-- Ventajas y desventajas -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>⚖️ Ventajas y Desventajas</h3>
+                    <h3> Ventajas y Desventajas</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h5 class="text-success">✅ Ventajas</h5>
+                            <h5 class="text-success"> Ventajas</h5>
                             <ul>
                                 <li><strong>Convergencia cuadrática</strong>: muy rápido cuando funciona</li>
                                 <li>Requiere pocas iteraciones (típicamente 3-5)</li>
@@ -329,7 +329,7 @@
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>💡 Ejemplos</h3>
+                    <h3> Ejemplos</h3>
                 </div>
                 <div class="card-body">
                     <h5>Ejemplo 1: Raíz cuadrada (x² - 4 = 0)</h5>
@@ -390,7 +390,7 @@ document.getElementById('calc-derivative-btn').addEventListener('click', functio
     
     // Validar que haya función
     if (!functionInput.trim()) {
-        helpText.innerHTML = '⚠️ Por favor ingresa primero la función f(x)';
+        helpText.innerHTML = ' Por favor ingresa primero la función f(x)';
         helpText.className = 'form-text text-warning';
         return;
     }
@@ -416,15 +416,15 @@ document.getElementById('calc-derivative-btn').addEventListener('click', functio
     .then(data => {
         if (data.is_successful) {
             derivativeInput.value = data.derivative_str;
-            helpText.innerHTML = `✅ ${data.message}`;
+            helpText.innerHTML = ` ${data.message}`;
             helpText.className = 'form-text text-success';
         } else {
-            helpText.innerHTML = `❌ ${data.message}`;
+            helpText.innerHTML = ` ${data.message}`;
             helpText.className = 'form-text text-danger';
         }
     })
     .catch(error => {
-        helpText.innerHTML = `❌ Error de conexión: ${error}`;
+        helpText.innerHTML = ` Error de conexión: ${error}`;
         helpText.className = 'form-text text-danger';
     })
     .finally(() => {

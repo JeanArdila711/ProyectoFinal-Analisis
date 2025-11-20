@@ -26,11 +26,11 @@
             {% if template_data.message_method %}
                 {% if template_data.is_successful %}
                     <div class="alert alert-success" role="alert">
-                        <strong>✅ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% else %}
                     <div class="alert alert-danger" role="alert">
-                        <strong>❌ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% endif %}
             {% endif %}
@@ -50,31 +50,31 @@
                         <strong>Proceso:</strong>
                     </p>
                     <ul>
-                        <li>1️⃣ Construir la matriz de Vandermonde V</li>
-                        <li>2️⃣ Resolver el sistema V·a = y para obtener los coeficientes a</li>
-                        <li>3️⃣ El polinomio es P(x) = a₀ + a₁·x + a₂·x² + ... + a_{n-1}·x^{n-1}</li>
+                        <li>1. Construir la matriz de Vandermonde V</li>
+                        <li>2. Resolver el sistema V·a = y para obtener los coeficientes a</li>
+                        <li>3. El polinomio es P(x) = a₀ + a₁·x + a₂·x² + ... + a_{n-1}·x^{n-1}</li>
                     </ul>
                     <p>
                         <strong>Características:</strong>
                     </p>
                     <ul>
-                        <li>✅ <strong>Matemáticamente elegante</strong> - Sistema lineal directo</li>
-                        <li>✅ <strong>Genera el polinomio único</strong> de grado n-1</li>
-                        <li>✅ <strong>Base histórica</strong> - Método clásico en análisis numérico</li>
-                        <li>❌ <strong>Inestable numéricamente</strong> - Matriz de Vandermonde mal condicionada</li>
-                        <li>❌ <strong>Lento para muchos puntos</strong> - O(n³) por resolución del sistema</li>
+                        <li> <strong>Matemáticamente elegante</strong> - Sistema lineal directo</li>
+                        <li> <strong>Genera el polinomio único</strong> de grado n-1</li>
+                        <li> <strong>Base histórica</strong> - Método clásico en análisis numérico</li>
+                        <li> <strong>Inestable numéricamente</strong> - Matriz de Vandermonde mal condicionada</li>
+                        <li> <strong>Lento para muchos puntos</strong> - O(n³) por resolución del sistema</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario (SIN ACORDEÓN) -->
+            <!--  LAYOUT DE 2 COLUMNAS: Guía + Formulario (SIN ACORDEÓN) -->
             <div class="row">
                 <!-- COLUMNA IZQUIERDA: Guía de Uso FIJA -->
                 <div class="col-lg-5">
                     {% if help_content %}
                     <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
                         <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                            <h4 class="mb-0"> Guía de Uso</h4>
                         </div>
                         <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                             {{ help_content|safe }}
@@ -87,7 +87,7 @@
                 <div class="col-lg-7">
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-header">
-                            <h3>🔢 Puntos de Interpolación</h3>
+                            <h3> Puntos de Interpolación</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST">
@@ -124,7 +124,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
-                                    🚀 Interpolar (Vandermonde)
+                                     Interpolar (Vandermonde)
                                 </button>
                             </form>
                         </div>
@@ -136,7 +136,7 @@
             {% if template_data.have_solution %}
             <div class="card bg-success text-white mb-4">
                 <div class="card-header">
-                    <h3>✅ Polinomio Interpolante Encontrado</h3>
+                    <h3> Polinomio Interpolante Encontrado</h3>
                 </div>
                 <div class="card-body">
                     <h5>Polinomio P(x):</h5>
@@ -159,7 +159,7 @@
             <!-- Matriz de Vandermonde -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Matriz de Vandermonde</h3>
+                    <h3> Matriz de Vandermonde</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Para los puntos x₀, x₁, x₂, ..., x_{n-1}, la matriz V es:</strong></p>
@@ -187,7 +187,7 @@
             <!-- Fórmula matemática -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📐 Fórmula del Polinomio Interpolante</h3>
+                    <h3> Fórmula del Polinomio Interpolante</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>El polinomio resultante es:</strong></p>
@@ -209,7 +209,7 @@
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>💡 Ejemplos</h3>
+                    <h3> Ejemplos</h3>
                 </div>
                 <div class="card-body">
                     <h5>Ejemplo 1: Polinomio Cuadrático (3 puntos)</h5>
@@ -240,7 +240,7 @@
             <!-- Comparación con otros métodos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Comparación: Vandermonde vs Otros Métodos</h3>
+                    <h3> Comparación: Vandermonde vs Otros Métodos</h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -292,12 +292,12 @@
             <!-- Ventajas y Desventajas -->
             <div class="card bg-warning text-dark mb-4">
                 <div class="card-header">
-                    <h3>⚠️ Ventajas vs Desventajas</h3>
+                    <h3> Ventajas vs Desventajas</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h5>✅ Ventajas:</h5>
+                            <h5> Ventajas:</h5>
                             <ul>
                                 <li>Método clásico y bien fundamentado</li>
                                 <li>Fácil de entender conceptualmente</li>
@@ -305,7 +305,7 @@
                             </ul>
                         </div>
                         <div class="col-md-6">
-                            <h5>❌ Desventajas:</h5>
+                            <h5> Desventajas:</h5>
                             <ul>
                                 <li><strong>Matriz mal condicionada</strong> (problemas numéricos)</li>
                                 <li>Lento para muchos puntos: O(n³)</li>

@@ -1,11 +1,9 @@
-
 from django.views.generic import TemplateView
 from django.http import HttpRequest, HttpResponse
 from numerical.containers.numerical_method_container import NumericalMethodContainer
 from dependency_injector.wiring import inject, Provide
 from numerical.interfaces.matrix_method import MatrixMethod
 from numerical.services.comparison_service2 import ComparisonService as ComparisonLinearService
-
 
 class ComparisonLinearView(TemplateView):
     template_name = "numerical/cap2/comparison_linear.html"
@@ -34,7 +32,6 @@ class ComparisonLinearView(TemplateView):
         tolerance = float(request.POST.get("tolerance"))
         max_iterations = int(request.POST.get("max_iterations"))
         matrix_size = int(request.POST.get("matrix_size"))
-        precision = int(request.POST.get("precision_type"))
         relaxation_factor = float(request.POST.get("relaxation_factor"))
         generate_pdf = request.POST.get("generate_pdf") == "on"
 
@@ -52,8 +49,7 @@ class ComparisonLinearView(TemplateView):
             A, b, x0 = jacobi_validation
             jacobi_result = self.jacobi_service.solve(
                 A=A, b=b, x0=x0, tolerance=tolerance,
-                max_iterations=max_iterations,
-                precision_type="decimales_correctos" if precision else "cifras_significativas"
+                max_iterations=max_iterations
             )
 
         gauss_result = None
@@ -69,8 +65,7 @@ class ComparisonLinearView(TemplateView):
             A, b, x0 = gauss_validation
             gauss_result = self.gauss_seidel_service.solve(
                 A=A, b=b, x0=x0, tolerance=tolerance,
-                max_iterations=max_iterations,
-                precision=precision
+                max_iterations=max_iterations
             )
 
         sor_result = None
@@ -88,8 +83,7 @@ class ComparisonLinearView(TemplateView):
             sor_result = self.sor_service.solve(
                 A=A, b=b, x0=x0, tolerance=tolerance,
                 max_iterations=max_iterations,
-                relaxation_factor=relaxation_factor,
-                precision_type=precision
+                relaxation_factor=relaxation_factor
             )
 
         # Crear comparación
@@ -111,7 +105,6 @@ class ComparisonLinearView(TemplateView):
                 "initial_guess_raw": initial_guess_raw,
                 "tolerance": tolerance,
                 "max_iterations": max_iterations,
-                "precision_type": "Decimales correctos" if precision else "Cifras significativas",
                 "relaxation_factor": relaxation_factor
             }
             pdf_path = self.comparison_service.generate_pdf_report(comparison_data, form_data)
@@ -125,7 +118,6 @@ class ComparisonLinearView(TemplateView):
                 "initial_guess_raw": initial_guess_raw,
                 "tolerance": tolerance,
                 "max_iterations": max_iterations,
-                "precision_type": precision,
                 "relaxation_factor": relaxation_factor,
                 "generate_pdf": generate_pdf
             }

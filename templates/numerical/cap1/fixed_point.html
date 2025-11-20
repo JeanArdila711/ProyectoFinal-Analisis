@@ -26,11 +26,11 @@
             {% if template_data %}
                 {% if template_data.is_successful %}
                     <div class="alert alert-success" role="alert">
-                        <strong>✅ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% else %}
                     <div class="alert alert-danger" role="alert">
-                        <strong>❌ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% endif %}
             {% endif %}
@@ -38,7 +38,7 @@
             <!-- Descripción del método -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📖 Descripción</h3>
+                    <h3>Descripción</h3>
                 </div>
                 <div class="card-body">
                     <p>
@@ -55,14 +55,14 @@
                 </div>
             </div>
 
-            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
+            <!--  LAYOUT DE 2 COLUMNAS: Guía + Formulario -->
             <div class="row">
                 <!-- COLUMNA IZQUIERDA: Guía de Uso CON ACORDEÓN -->
                 <div class="col-lg-5">
                     {% if help_content %}
                     <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
                         <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                            <h4 class="mb-0">Guía de Uso</h4>
                         </div>
                         <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                             <div class="accordion accordion-flush" id="helpAccordion">
@@ -77,7 +77,7 @@
                 <div class="col-lg-7">
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-header">
-                            <h3>🔢 Datos de Entrada</h3>
+                            <h3>Datos de Entrada</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST">
@@ -112,7 +112,7 @@
                                 </div>
 
                                 <div class="alert alert-info" role="alert">
-                                    <strong>💡 Importante:</strong> g(x) debe derivarse de f(x) = 0. Por ejemplo:
+                                    <strong>Importante:</strong> g(x) debe derivarse de f(x) = 0. Por ejemplo:
                                     <ul class="mb-0 mt-2">
                                         <li>Si f(x) = x² - 4 → g(x) = √4 = 4/x (despejando x)</li>
                                         <li>Si f(x) = x - cos(x) → g(x) = cos(x)</li>
@@ -165,7 +165,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
-                                    🚀 Calcular Raíz
+                                    Calcular Raíz
                                 </button>
                             </form>
                         </div>
@@ -177,7 +177,7 @@
             {% if template_data.have_solution %}
             <div class="card bg-success text-white mb-4">
                 <div class="card-header">
-                    <h3>✅ Raíz Encontrada</h3>
+                    <h3> Raíz Encontrada</h3>
                 </div>
                 <div class="card-body">
                     <h4>Valor de la raíz:</h4>
@@ -220,7 +220,7 @@
             <!-- Gráfica -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Visualización</h3>
+                    <h3>Visualización</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
@@ -233,7 +233,7 @@
             <!-- Sin solución pero método funcionó -->
             <div class="card bg-warning text-dark mb-4">
                 <div class="card-body">
-                    <h4>⚠️ No se encontró raíz</h4>
+                    <h4>No se encontró raíz</h4>
                     <p>{{ template_data.message_method }}</p>
                     <p><strong>Posibles causas:</strong></p>
                     <ul>
@@ -248,7 +248,7 @@
             <!-- Gráfica -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Visualización</h3>
+                    <h3>Visualización</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{% static 'img/numerical_method/function_plot.svg' %}" 
@@ -262,7 +262,7 @@
             <!-- Fórmula matemática -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📐 Fórmula de Punto Fijo</h3>
+                    <h3>Fórmula de Punto Fijo</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Transformación de la ecuación:</strong></p>
@@ -301,7 +301,7 @@
             <!-- Cómo construir g(x) -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>🎯 Cómo Construir g(x)</h3>
+                    <h3>Cómo Construir g(x)</h3>
                 </div>
                 <div class="card-body">
                     <p>Existen varias formas de despejar x = g(x) desde f(x) = 0:</p>
@@ -319,7 +319,7 @@
                     </ul>
 
                     <div class="alert alert-warning mt-3">
-                        <strong>⚠️ Importante:</strong> No todas las formas de g(x) convergen. 
+                        <strong>Importante:</strong> No todas las formas de g(x) convergen. 
                         Verifica que |g'(x)| < 1 cerca de la raíz.
                     </div>
                 </div>
@@ -328,7 +328,7 @@
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>💡 Ejemplos</h3>
+                    <h3>Ejemplos</h3>
                 </div>
                 <div class="card-body">
                     <h5>Ejemplo 1: Raíz cuadrada</h5>

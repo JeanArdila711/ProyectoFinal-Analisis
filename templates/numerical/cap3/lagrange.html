@@ -26,11 +26,11 @@
             {% if template_data.message_method %}
                 {% if template_data.is_successful %}
                     <div class="alert alert-success" role="alert">
-                        <strong>✅ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% else %}
                     <div class="alert alert-danger" role="alert">
-                        <strong>❌ {{ template_data.message_method }}</strong>
+                        <strong> {{ template_data.message_method }}</strong>
                     </div>
                 {% endif %}
             {% endif %}
@@ -38,7 +38,7 @@
             <!-- Descripción del método -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📖 Descripción</h3>
+                    <h3> Descripción</h3>
                 </div>
                 <div class="card-body">
                     <p>
@@ -50,28 +50,28 @@
                         <strong>Ventajas:</strong>
                     </p>
                     <ul>
-                        <li>✅ Conceptualmente simple</li>
-                        <li>✅ No requiere resolver sistemas lineales</li>
-                        <li>✅ Funciona con puntos no equiespaciados</li>
+                        <li> Conceptualmente simple</li>
+                        <li> No requiere resolver sistemas lineales</li>
+                        <li> Funciona con puntos no equiespaciados</li>
                     </ul>
                     <p>
                         <strong>Desventajas:</strong>
                     </p>
                     <ul>
-                        <li>❌ Computacionalmente más costoso para muchos puntos</li>
-                        <li>❌ Puede oscilar mucho (fenómeno de Runge) con muchos puntos</li>
+                        <li> Computacionalmente más costoso para muchos puntos</li>
+                        <li> Puede oscilar mucho (fenómeno de Runge) con muchos puntos</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- ✅ LAYOUT DE 2 COLUMNAS: Guía + Formulario (SIN ACORDEÓN) -->
+            <!--  LAYOUT DE 2 COLUMNAS: Guía + Formulario (SIN ACORDEÓN) -->
             <div class="row">
                 <!-- COLUMNA IZQUIERDA: Guía de Uso FIJA -->
                 <div class="col-lg-5">
                     {% if help_content %}
                     <div class="card bg-dark text-white mb-4 border-warning sticky-top" style="top: 20px;">
                         <div class="card-header bg-warning text-dark">
-                            <h4 class="mb-0">📚 Guía de Uso</h4>
+                            <h4 class="mb-0"> Guía de Uso</h4>
                         </div>
                         <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                             {{ help_content|safe }}
@@ -84,7 +84,7 @@
                 <div class="col-lg-7">
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-header">
-                            <h3>🔢 Puntos de Interpolación</h3>
+                            <h3> Puntos de Interpolación</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST">
@@ -121,7 +121,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
-                                    🚀 Interpolar
+                                     Interpolar
                                 </button>
                             </form>
                         </div>
@@ -133,7 +133,7 @@
             {% if template_data.have_solution %}
             <div class="card bg-success text-white mb-4">
                 <div class="card-header">
-                    <h3>✅ Polinomio Interpolante Encontrado</h3>
+                    <h3> Polinomio Interpolante Encontrado</h3>
                 </div>
                 <div class="card-body">
                     <h5>Polinomio P(x):</h5>
@@ -157,7 +157,7 @@
             <!-- Fórmula matemática -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📐 Fórmula de Lagrange</h3>
+                    <h3> Fórmula de Lagrange</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Polinomio interpolante:</strong></p>
@@ -188,7 +188,7 @@
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>💡 Ejemplos</h3>
+                    <h3> Ejemplos</h3>
                 </div>
                 <div class="card-body">
                     <h5>Ejemplo 1: Polinomio de Grado 2 (parábola)</h5>
@@ -217,7 +217,7 @@
             <!-- Comparación con otros métodos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
-                    <h3>📊 Comparación de Métodos de Interpolación</h3>
+                    <h3> Comparación de Métodos de Interpolación</h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -254,7 +254,7 @@
             <!-- Fenómeno de Runge -->
             <div class="card bg-warning text-dark mb-4">
                 <div class="card-header">
-                    <h3>⚠️ Fenómeno de Runge</h3>
+                    <h3> Fenómeno de Runge</h3>
                 </div>
                 <div class="card-body">
                     <p>

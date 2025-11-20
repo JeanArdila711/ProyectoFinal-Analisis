@@ -21,7 +21,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f; font-weight:bold;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-operadores">
-                📊 Operadores Matemáticos
+                 Operadores Matemáticos
             </button>
         </h2>
         <div id="collapse-operadores" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -48,7 +48,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-funciones">
-                🔢 Funciones Matemáticas
+                 Funciones Matemáticas
             </button>
         </h2>
         <div id="collapse-funciones" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -77,12 +77,12 @@ HELP_CONTENT = {
         </h2>
         <div id="collapse-parentesis" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
             <div class="accordion-body" style="background:#262a32; color:#fff;">
-                <h6 style="color:#87ea97;">✅ CORRECTO:</h6>
+                <h6 style="color:#87ea97;"> CORRECTO:</h6>
                 <ul>
                     <li><code>(x + 2) / (x - 1)</code></li>
                     <li><code>math.sin(x + 1)</code></li>
                 </ul>
-                <h6 style="color:#ffd54f;">❌ INCORRECTO:</h6>
+                <h6 style="color:#ffd54f;"> INCORRECTO:</h6>
                 <ul>
                     <li><code>x + 2 / x - 1</code></li>
                     <li><code>2x + 5</code> (falta *)</li>
@@ -95,7 +95,7 @@ HELP_CONTENT = {
         <div class="accordion-item bg-info">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed bg-info text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parametros">
-                    📝 Parámetros de Bisección
+                     Parámetros de Bisección
                 </button>
             </h2>
             <div id="collapse-parametros" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -105,7 +105,7 @@ HELP_CONTENT = {
                     
                     <h6 class="mt-3">2. INTERVALO [a, b]:</h6>
                     <p>a = <code>0</code>, b = <code>3</code></p>
-                    <p class="text-danger"><strong>⚠️</strong> Debe cumplir f(a) × f(b) &lt; 0</p>
+                    <p class="text-danger"><strong></strong> Debe cumplir f(a) × f(b) &lt; 0</p>
                     
                     <h6 class="mt-3">3. TOLERANCIA:</h6>
                     <p><code>5e-5</code></p>
@@ -125,7 +125,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f; font-weight:bold;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-operadores">
-                📊 Operadores Matemáticos
+                 Operadores Matemáticos
             </button>
         </h2>
         <div id="collapse-operadores" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -152,7 +152,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-funciones">
-                🔢 Funciones Matemáticas
+                 Funciones Matemáticas
             </button>
         </h2>
         <div id="collapse-funciones" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -181,12 +181,12 @@ HELP_CONTENT = {
         </h2>
         <div id="collapse-parentesis" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
             <div class="accordion-body" style="background:#262a32; color:#fff;">
-                <h6 style="color:#87ea97;">✅ CORRECTO:</h6>
+                <h6 style="color:#87ea97;"> CORRECTO:</h6>
                 <ul>
                     <li><code>(x + 2) / (x - 1)</code></li>
                     <li><code>math.sin(x + 1)</code></li>
                 </ul>
-                <h6 style="color:#ffd54f;">❌ INCORRECTO:</h6>
+                <h6 style="color:#ffd54f;"> INCORRECTO:</h6>
                 <ul>
                     <li><code>x + 2 / x - 1</code></li>
                     <li><code>2x + 5</code> (falta *)</li>
@@ -198,7 +198,7 @@ HELP_CONTENT = {
         <div class="accordion-item bg-info">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed bg-info text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parametros">
-                    📝 Parámetros de Regla Falsa
+                     Parámetros de Regla Falsa
                 </button>
             </h2>
             <div id="collapse-parametros" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -208,7 +208,7 @@ HELP_CONTENT = {
                     
                     <h6 class="mt-3">2. INTERVALO [a, b]:</h6>
                     <p>a = <code>1</code>, b = <code>2</code></p>
-                    <p class="text-danger"><strong>⚠️</strong> Debe cumplir f(a) × f(b) &lt; 0</p>
+                    <p class="text-danger"><strong></strong> Debe cumplir f(a) × f(b) &lt; 0</p>
                     
                     <h6 class="mt-3">3. TOLERANCIA:</h6>
                     <p><code>5e-5</code></p>
@@ -225,7 +225,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f; font-weight:bold;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-operadores">
-                📊 Operadores Matemáticos
+                 Operadores Matemáticos
             </button>
         </h2>
         <div id="collapse-operadores" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -252,7 +252,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-funciones">
-                🔢 Funciones Matemáticas
+                 Funciones Matemáticas
             </button>
         </h2>
         <div id="collapse-funciones" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -281,12 +281,12 @@ HELP_CONTENT = {
         </h2>
         <div id="collapse-parentesis" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
             <div class="accordion-body" style="background:#262a32; color:#fff;">
-                <h6 style="color:#87ea97;">✅ CORRECTO:</h6>
+                <h6 style="color:#87ea97;"> CORRECTO:</h6>
                 <ul>
                     <li><code>(x + 2) / (x - 1)</code></li>
                     <li><code>math.sin(x + 1)</code></li>
                 </ul>
-                <h6 style="color:#ffd54f;">❌ INCORRECTO:</h6>
+                <h6 style="color:#ffd54f;"> INCORRECTO:</h6>
                 <ul>
                     <li><code>x + 2 / x - 1</code></li>
                     <li><code>2x + 5</code> (falta *)</li>
@@ -298,7 +298,7 @@ HELP_CONTENT = {
         <div class="accordion-item bg-info">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed bg-info text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parametros">
-                    📝 Parámetros de Newton-Raphson
+                     Parámetros de Newton-Raphson
                 </button>
             </h2>
             <div id="collapse-parametros" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -307,7 +307,7 @@ HELP_CONTENT = {
                     <p><code>x**3 - 2*x - 5</code></p>
                     
                     <h6 class="mt-3">2. DERIVADA f'(x):</h6>
-                    <p>Usa el botón <span class="badge bg-warning">🧮 Calcular Automáticamente</span></p>
+                    <p>Usa el botón <span class="badge bg-warning"> Calcular Automáticamente</span></p>
                     <p>O ingresa: <code>3*x**2 - 2</code></p>
                     
                     <h6 class="mt-3">3. VALOR INICIAL x₀:</h6>
@@ -328,7 +328,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f; font-weight:bold;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-operadores">
-                📊 Operadores Matemáticos
+                 Operadores Matemáticos
             </button>
         </h2>
         <div id="collapse-operadores" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -355,7 +355,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-funciones">
-                🔢 Funciones Matemáticas
+                 Funciones Matemáticas
             </button>
         </h2>
         <div id="collapse-funciones" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -384,12 +384,12 @@ HELP_CONTENT = {
         </h2>
         <div id="collapse-parentesis" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
             <div class="accordion-body" style="background:#262a32; color:#fff;">
-                <h6 style="color:#87ea97;">✅ CORRECTO:</h6>
+                <h6 style="color:#87ea97;"> CORRECTO:</h6>
                 <ul>
                     <li><code>(x + 2) / (x - 1)</code></li>
                     <li><code>math.sin(x + 1)</code></li>
                 </ul>
-                <h6 style="color:#ffd54f;">❌ INCORRECTO:</h6>
+                <h6 style="color:#ffd54f;"> INCORRECTO:</h6>
                 <ul>
                     <li><code>x + 2 / x - 1</code></li>
                     <li><code>2x + 5</code> (falta *)</li>
@@ -401,7 +401,7 @@ HELP_CONTENT = {
         <div class="accordion-item bg-info">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed bg-info text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parametros">
-                    📝 Parámetros de Secante
+                     Parámetros de Secante
                 </button>
             </h2>
             <div id="collapse-parametros" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -428,7 +428,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f; font-weight:bold;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-operadores">
-                📊 Operadores Matemáticos
+                 Operadores Matemáticos
             </button>
         </h2>
         <div id="collapse-operadores" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -455,7 +455,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-funciones">
-                🔢 Funciones Matemáticas
+                 Funciones Matemáticas
             </button>
         </h2>
         <div id="collapse-funciones" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -484,12 +484,12 @@ HELP_CONTENT = {
         </h2>
         <div id="collapse-parentesis" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
             <div class="accordion-body" style="background:#262a32; color:#fff;">
-                <h6 style="color:#87ea97;">✅ CORRECTO:</h6>
+                <h6 style="color:#87ea97;"> CORRECTO:</h6>
                 <ul>
                     <li><code>(x + 2) / (x - 1)</code></li>
                     <li><code>math.sin(x + 1)</code></li>
                 </ul>
-                <h6 style="color:#ffd54f;">❌ INCORRECTO:</h6>
+                <h6 style="color:#ffd54f;"> INCORRECTO:</h6>
                 <ul>
                     <li><code>x + 2 / x - 1</code></li>
                     <li><code>2x + 5</code> (falta *)</li>
@@ -501,7 +501,7 @@ HELP_CONTENT = {
         <div class="accordion-item bg-info">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed bg-info text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parametros">
-                    📝 Parámetros de Punto Fijo
+                     Parámetros de Punto Fijo
                 </button>
             </h2>
             <div id="collapse-parametros" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -516,7 +516,7 @@ HELP_CONTENT = {
                     <h6 class="mt-3">3. TOLERANCIA:</h6>
                     <p><code>5e-5</code></p>
                     
-                    <p class="text-warning mt-3"><strong>⚠️</strong> Debe cumplir |g'(x)| &lt; 1</p>
+                    <p class="text-warning mt-3"><strong></strong> Debe cumplir |g'(x)| &lt; 1</p>
                 </div>
             </div>
         </div>
@@ -530,7 +530,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f; font-weight:bold;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-operadores">
-                📊 Operadores Matemáticos
+                 Operadores Matemáticos
             </button>
         </h2>
         <div id="collapse-operadores" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -557,7 +557,7 @@ HELP_CONTENT = {
             <button class="accordion-button collapsed"
                     style="background:#232d3e; color:#ffd54f;"
                     type="button" data-bs-toggle="collapse" data-bs-target="#collapse-funciones">
-                🔢 Funciones Matemáticas
+                 Funciones Matemáticas
             </button>
         </h2>
         <div id="collapse-funciones" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -586,12 +586,12 @@ HELP_CONTENT = {
         </h2>
         <div id="collapse-parentesis" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
             <div class="accordion-body" style="background:#262a32; color:#fff;">
-                <h6 style="color:#87ea97;">✅ CORRECTO:</h6>
+                <h6 style="color:#87ea97;"> CORRECTO:</h6>
                 <ul>
                     <li><code>(x + 2) / (x - 1)</code></li>
                     <li><code>math.sin(x + 1)</code></li>
                 </ul>
-                <h6 style="color:#ffd54f;">❌ INCORRECTO:</h6>
+                <h6 style="color:#ffd54f;"> INCORRECTO:</h6>
                 <ul>
                     <li><code>x + 2 / x - 1</code></li>
                     <li><code>2x + 5</code> (falta *)</li>
@@ -603,7 +603,7 @@ HELP_CONTENT = {
         <div class="accordion-item bg-info">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed bg-info text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parametros">
-                    📝 Parámetros de Raíces Múltiples
+                     Parámetros de Raíces Múltiples
                 </button>
             </h2>
             <div id="collapse-parametros" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
@@ -614,8 +614,8 @@ HELP_CONTENT = {
                     <h6 class="mt-3">2. DERIVADAS:</h6>
                     <p>Usa los botones automáticos:</p>
                     <ul>
-                        <li><span class="badge bg-warning">🧮 Calcular f'(x)</span></li>
-                        <li><span class="badge bg-info">🧮 Calcular f''(x)</span></li>
+                        <li><span class="badge bg-warning"> Calcular f'(x)</span></li>
+                        <li><span class="badge bg-info"> Calcular f''(x)</span></li>
                     </ul>
                     
                     <h6 class="mt-3">3. VALOR INICIAL x₀:</h6>
@@ -653,7 +653,7 @@ HELP_CONTENT = {
             <span class="badge" style="background: #383f51; color:#ffc107; margin-left:8px;">0 0 0</span>
             <br><b>TOLERANCIA:</b>
             <code style="color:#ffd54f; background:#212121; padding:2px 6px; border-radius:5px;">5e-5</code>
-            <div style="margin-top:1em;color:#ffc107;"><b>⚠️ La matriz debe ser diagonalmente dominante para garantizar convergencia</b></div>
+            <div style="margin-top:1em;color:#ffc107;"><b> La matriz debe ser diagonalmente dominante para garantizar convergencia</b></div>
         </div>
     </div>
 ''',
@@ -672,7 +672,7 @@ HELP_CONTENT = {
             <b>VECTOR B:</b><span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">15 10 10</span>
             <br><b>VECTOR x₀:</b><span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">0 0 0</span>
             <br><b>TOLERANCIA:</b><code style="color:#ffd54f; background:#212121; padding:2px 6px; border-radius:5px;">5e-5</code>
-            <div style="margin-top:1em;color:#03e37d;"><b>✅ Converge ~2x más rápido que Jacobi</b></div>
+            <div style="margin-top:1em;color:#03e37d;"><b> Converge ~2x más rápido que Jacobi</b></div>
         </div>
     </div>
 ''',
@@ -731,7 +731,7 @@ HELP_CONTENT = {
         <div class="card-body" style="color:#e5e5e5;">
             <b>VALORES X:</b> <span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">0 1 2 3</span>
             <br><b>VALORES Y:</b> <span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">0 1 4 9</span>
-            <div class="mt-2" style="color:#87ea97;"><b>💡 Fácil agregar puntos nuevos</b></div>
+            <div class="mt-2" style="color:#87ea97;"><b> Fácil agregar puntos nuevos</b></div>
         </div>
     </div>
 ''',
@@ -746,7 +746,7 @@ HELP_CONTENT = {
             <b>VALORES X:</b> <span class="badge" style="background:#383f51; color: #ffc107; margin-left:8px;">0 1 2</span>
             <br><b>VALORES Y:</b> <span class="badge" style="background:#383f51; color: #ffc107; margin-left:8px;">0 1 4</span>
             <div style="margin-top:10px; color:#ffc107;">
-                ⚠️ Evitar más de 8 puntos
+                 Evitar más de 8 puntos
             </div>
         </div>
     </div>
@@ -761,7 +761,7 @@ HELP_CONTENT = {
         <div class="card-body" style="color:#e5e5e5;">
             <b>VALORES X:</b> <span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">0 1 2 3 4</span>
             <br><b>VALORES Y:</b> <span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">0 1 4 9 16</span>
-            <div class="mt-2" style="color:#87ea97;"><b>💡 Conecta con líneas rectas</b></div>
+            <div class="mt-2" style="color:#87ea97;"><b> Conecta con líneas rectas</b></div>
         </div>
     </div>
 ''',
@@ -775,7 +775,7 @@ HELP_CONTENT = {
         <div class="card-body" style="color:#e5e5e5;">
             <b>VALORES X:</b> <span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">0 1 2 3 4</span>
             <br><b>VALORES Y:</b> <span class="badge" style="background: #383f51; color: #ffc107; margin-left:8px;">0 1 4 9 16</span>
-            <div class="mt-2" style="color:#87ea97;"><b>✅ Curva muy suave (C² continuo)</b></div>
+            <div class="mt-2" style="color:#87ea97;"><b> Curva muy suave (C² continuo)</b></div>
         </div>
     </div>
 ''',
