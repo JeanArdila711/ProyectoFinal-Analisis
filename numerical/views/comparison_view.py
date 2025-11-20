@@ -1,4 +1,3 @@
-# comparison_view.py - Colocar en: src/application/numerical_method/views/comparison_view.py
 from django.views.generic import TemplateView
 from django.http import HttpRequest, HttpResponse
 from numerical.interfaces.interval_method import IntervalMethod
@@ -8,7 +7,6 @@ from dependency_injector.wiring import inject, Provide
 from shared.utils.plot_function import plot_function
 from numerical.services.comparison_service import ComparisonService
 import json
-
 
 class ComparisonView(TemplateView):
     template_name = "numerical/cap1/comparison.html"
@@ -21,6 +19,7 @@ class ComparisonView(TemplateView):
         newton_service: IterativeMethod = Provide[NumericalMethodContainer.newton_service],
         regula_falsi_service: IntervalMethod = Provide[NumericalMethodContainer.regula_falsi_service],
         secant_service: IterativeMethod = Provide[NumericalMethodContainer.secant_service],
+        multiple_roots_service: IterativeMethod = Provide[NumericalMethodContainer.multiple_roots_2_service],
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -29,11 +28,12 @@ class ComparisonView(TemplateView):
         self.newton_service = newton_service
         self.regula_falsi_service = regula_falsi_service
         self.secant_service = secant_service
+        self.multiple_roots_service = multiple_roots_service
         self.comparison_service = ComparisonService()
 
     def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         context = self.get_context_data()
-        
+
         # Extraer datos del formulario
         interval_a = float(request.POST.get("interval_a"))
         interval_b = float(request.POST.get("interval_b"))
@@ -53,7 +53,6 @@ class ComparisonView(TemplateView):
             max_iterations=max_iterations,
             function_f=function_f,
         )
-
         bisection_result = None
         if bisection_validation is True:
             bisection_result = self.bisection_service.solve(
@@ -73,7 +72,6 @@ class ComparisonView(TemplateView):
             function_f=function_f,
             function_g=function_g,
         )
-
         fixed_point_result = None
         if fixed_point_validation is True:
             fixed_point_result = self.fixed_point_service.solve(
@@ -92,7 +90,6 @@ class ComparisonView(TemplateView):
             max_iterations=max_iterations,
             function_f=function_f,
         )
-
         newton_result = None
         if newton_validation is True:
             newton_result = self.newton_service.solve(
@@ -103,7 +100,6 @@ class ComparisonView(TemplateView):
                 precision=precision,
             )
 
-
         # Ejecutar método de Regla Falsa
         regula_falsi_validation = self.regula_falsi_service.validate_input(
             interval_a=interval_a,
@@ -112,7 +108,6 @@ class ComparisonView(TemplateView):
             max_iterations=max_iterations,
             function_f=function_f,
         )
-
         regula_falsi_result = None
         if regula_falsi_validation is True:
             regula_falsi_result = self.regula_falsi_service.solve(
@@ -132,7 +127,6 @@ class ComparisonView(TemplateView):
             function_f=function_f,
             interval_b=interval_b,
         )
-
         secant_result = None
         if secant_validation is True:
             secant_result = self.secant_service.solve(
@@ -144,18 +138,37 @@ class ComparisonView(TemplateView):
                 interval_b=interval_b,
             )
 
-        # Crear comparación con los cinco métodos
+        # Ejecutar método de Raíces Múltiples
+        multiple_roots_validation = self.multiple_roots_service.validate_input(
+            x0=x0,
+            tolerance=tolerance,
+            max_iterations=max_iterations,
+            function_f=function_f,
+        )
+        multiple_roots_result = None
+        if multiple_roots_validation is True:
+            multiple_roots_result = self.multiple_roots_service.solve(
+                function_f=function_f,
+                x0=x0,
+                tolerance=tolerance,
+                max_iterations=max_iterations,
+                precision=precision,
+            )
+
+        # Crear comparación con todos los métodos
         comparison_data = self.comparison_service.create_comparison(
             bisection_result=bisection_result,
             fixed_point_result=fixed_point_result,
             newton_result=newton_result,
             regula_falsi_result=regula_falsi_result,
             secant_result=secant_result,
+            multiple_roots_result=multiple_roots_result,
             bisection_validation=bisection_validation,
             fixed_point_validation=fixed_point_validation,
             newton_validation=newton_validation,
             regula_falsi_validation=regula_falsi_validation,
             secant_validation=secant_validation,
+            multiple_roots_validation=multiple_roots_validation
         )
 
         # Generar PDF si se solicita
@@ -179,7 +192,6 @@ class ComparisonView(TemplateView):
         if (bisection_result and bisection_result.get("have_solution")) or \
            (fixed_point_result and fixed_point_result.get("have_solution")) or \
            (newton_result and newton_result.get("have_solution")):
-            
             roots = []
             if bisection_result and bisection_result.get("have_solution"):
                 roots.append((bisection_result["root"], 0.0))
@@ -191,7 +203,8 @@ class ComparisonView(TemplateView):
                 roots.append((regula_falsi_result["root"], 0.0))
             if secant_result and secant_result.get("have_solution"):
                 roots.append((secant_result["root"], 0.0))
-            
+            if multiple_roots_result and multiple_roots_result.get("have_solution"):
+                roots.append((multiple_roots_result["root"], 0.0))
             plot_function(function_f, True, roots)
 
         context["template_data"] = {

@@ -6,21 +6,20 @@ from reportlab.lib.units import inch
 from datetime import datetime
 import os
 
-
 class ComparisonService:
-    
-    def create_comparison(self, bisection_result, fixed_point_result, newton_result, 
-                         regula_falsi_result, secant_result,
+
+    def create_comparison(self, bisection_result, fixed_point_result, newton_result,
+                         regula_falsi_result, secant_result, multiple_roots_result,
                          bisection_validation, fixed_point_validation, newton_validation,
-                         regula_falsi_validation, secant_validation):
-        """Crea la comparación entre los cinco métodos"""
+                         regula_falsi_validation, secant_validation, multiple_roots_validation):
+        """Crea la comparación entre los seis métodos"""
         comparison = {
             "methods": [],
             "analysis": {},
             "has_valid_results": False
         }
-        
-        # Procesar resultado de bisección
+
+        # Bisección
         if bisection_result and bisection_result.get("is_successful"):
             bisection_data = self._process_method_result("Bisección", bisection_result)
             comparison["methods"].append(bisection_data)
@@ -34,8 +33,8 @@ class ComparisonService:
                 "root": "N/A",
                 "final_error": "N/A"
             })
-        
-        # Procesar resultado de punto fijo
+
+        # Punto fijo
         if fixed_point_result and fixed_point_result.get("is_successful"):
             fixed_point_data = self._process_method_result("Punto Fijo", fixed_point_result)
             comparison["methods"].append(fixed_point_data)
@@ -49,8 +48,8 @@ class ComparisonService:
                 "root": "N/A",
                 "final_error": "N/A"
             })
-        
-        # Procesar resultado de Newton-Raphson
+
+        # Newton-Raphson
         if newton_result and newton_result.get("is_successful"):
             newton_data = self._process_method_result("Newton-Raphson", newton_result)
             comparison["methods"].append(newton_data)
@@ -64,8 +63,8 @@ class ComparisonService:
                 "root": "N/A",
                 "final_error": "N/A"
             })
-        
-        # Procesar resultado de Regla Falsa
+
+        # Regla Falsa
         if regula_falsi_result and regula_falsi_result.get("is_successful"):
             regula_falsi_data = self._process_method_result("Regla Falsa", regula_falsi_result)
             comparison["methods"].append(regula_falsi_data)
@@ -79,8 +78,8 @@ class ComparisonService:
                 "root": "N/A",
                 "final_error": "N/A"
             })
-        
-        # Procesar resultado de Secante
+
+        # Secante
         if secant_result and secant_result.get("is_successful"):
             secant_data = self._process_method_result("Secante", secant_result)
             comparison["methods"].append(secant_data)
@@ -94,23 +93,38 @@ class ComparisonService:
                 "root": "N/A",
                 "final_error": "N/A"
             })
-        
-        # Realizar análisis comparativo solo si hay resultados válidos
+
+        # Raíces Múltiples
+        if multiple_roots_result and multiple_roots_result.get("is_successful"):
+            mr_data = self._process_method_result("Raíces Múltiples", multiple_roots_result)
+            comparison["methods"].append(mr_data)
+            comparison["has_valid_results"] = True
+        elif multiple_roots_validation != True:
+            comparison["methods"].append({
+                "method": "Raíces Múltiples",
+                "status": "Error de validación",
+                "error": multiple_roots_validation,
+                "iterations": "N/A",
+                "root": "N/A",
+                "final_error": "N/A"
+            })
+
+        # Análisis comparativo
         if comparison["has_valid_results"]:
             comparison["analysis"] = self._analyze_results(comparison["methods"])
-        
+
         return comparison
-    
+
     def _process_method_result(self, method_name, result):
         """Procesa el resultado de un método específico"""
         iterations = len(result.get("table", {}))
         final_error = "N/A"
-        
+
         if result.get("table") and iterations > 0:
             last_iteration = result["table"][iterations]
             if "error" in last_iteration and last_iteration["error"] != float('inf'):
                 final_error = last_iteration["error"]
-        
+
         return {
             "method": method_name,
             "status": "Exitoso" if result.get("have_solution") else "Sin convergencia",
@@ -120,7 +134,7 @@ class ComparisonService:
             "message": result.get("message_method", ""),
             "have_solution": result.get("have_solution", False)
         }
-    
+
     def _analyze_results(self, methods):
         """Analiza los resultados y determina el mejor método"""
         analysis = {
@@ -130,75 +144,79 @@ class ComparisonService:
             "best_overall": None,
             "summary": ""
         }
-        
+
         successful_methods = [m for m in methods if m.get("have_solution", False)]
-        
+
         if not successful_methods:
             analysis["summary"] = "Ningún método encontró una solución válida."
             return analysis
-        
-        # Encontrar el más eficiente (menos iteraciones)
+
+        # Más eficiente (menos iteraciones)
         if len(successful_methods) > 0:
             most_efficient = min(successful_methods, key=lambda x: x["iterations"])
             analysis["most_efficient"] = most_efficient["method"]
             analysis["fastest_convergence"] = most_efficient["method"]
-        
-        # Encontrar el más preciso (menor error final)
+
+        # Más preciso (menor error final)
         methods_with_error = [m for m in successful_methods if isinstance(m["final_error"], (int, float))]
         if methods_with_error:
             most_accurate = min(methods_with_error, key=lambda x: abs(x["final_error"]))
             analysis["most_accurate"] = most_accurate["method"]
-        
-        # Determinar el mejor en general
+
+        # Mejor en general (scoring)
         if len(successful_methods) == 1:
             analysis["best_overall"] = successful_methods[0]["method"]
             analysis["summary"] = f"Solo el método de {successful_methods[0]['method']} encontró una solución válida."
         else:
-            # Sistema de scoring mejorado para cinco métodos
             scores = {}
             for method in successful_methods:
+                # Scoring inicial
                 scores[method["method"]] = 0
-                
-                # Puntos por eficiencia (método con menos iteraciones)
+
+                # Eficiencia
                 if method["method"] == analysis["most_efficient"]:
                     scores[method["method"]] += 4
                 else:
-                    # Puntos proporcionales basados en iteraciones
                     min_iterations = min(m["iterations"] for m in successful_methods)
-                    if method["iterations"] <= min_iterations * 1.5:  # Si está cerca del mínimo
+                    if method["iterations"] <= min_iterations * 1.5:
                         scores[method["method"]] += 2
-                    elif method["iterations"] <= min_iterations * 2.0:  # Si está moderadamente cerca
+                    elif method["iterations"] <= min_iterations * 2.0:
                         scores[method["method"]] += 1
-                
-                # Puntos por precisión
+
+                # Precisión
                 if method["method"] == analysis["most_accurate"]:
                     scores[method["method"]] += 4
-                
-                # Bonus específicos por características de cada método
+
+                # Bonus específicos
                 if method["method"] == "Newton-Raphson" and method["have_solution"]:
-                    scores[method["method"]] += 2  # Convergencia cuadrática
-                
+                    scores[method["method"]] += 2
+
+                if method["method"] == "Raíces Múltiples" and method["have_solution"]:
+                    scores[method["method"]] += 3  # Bonus especial por multiplicidad
+
                 if method["method"] == "Bisección" and method["have_solution"]:
-                    scores[method["method"]] += 2  # Robustez garantizada
-                
+                    scores[method["method"]] += 2
+
                 if method["method"] == "Regla Falsa" and method["have_solution"]:
-                    scores[method["method"]] += 1  # Mejor que bisección, robustez
-                
+                    scores[method["method"]] += 1
+
                 if method["method"] == "Secante" and method["have_solution"]:
-                    scores[method["method"]] += 1  # No requiere derivada, convergencia rápida
-                
+                    scores[method["method"]] += 1
+
                 if method["method"] == "Punto Fijo" and method["have_solution"]:
-                    scores[method["method"]] += 1  # Versatilidad en reformulación
-            
+                    scores[method["method"]] += 1
+
             best_method = max(scores.keys(), key=lambda k: scores[k])
             analysis["best_overall"] = best_method
-            
-            # Generar resumen detallado
+
+            # Resumen detallado
             successful_names = [m["method"] for m in successful_methods]
-            total_methods = len([m for m in methods if m["method"] in ["Bisección", "Punto Fijo", "Newton-Raphson", "Regla Falsa", "Secante"]])
-            
+            total_methods = len([m for m in methods if m["method"] in ["Bisección", "Punto Fijo", "Newton-Raphson", "Regla Falsa", "Secante", "Raíces Múltiples"]])
+
             if len(successful_methods) == total_methods:
-                summary_start = "Los cinco métodos convergieron exitosamente. "
+                summary_start = "Los seis métodos convergieron exitosamente. "
+            elif len(successful_methods) == 5:
+                summary_start = "Cinco métodos convergieron exitosamente. "
             elif len(successful_methods) == 4:
                 summary_start = "Cuatro métodos convergieron exitosamente. "
             elif len(successful_methods) == 3:
@@ -207,30 +225,30 @@ class ComparisonService:
                 summary_start = f"Dos métodos convergieron: {' y '.join(successful_names)}. "
             else:
                 summary_start = f"Solo {successful_names[0]} convergió. "
-            
+
             min_iter = min(m['iterations'] for m in successful_methods)
             efficiency_info = f"El método más eficiente fue {analysis['most_efficient']} con {min_iter} iteraciones"
             accuracy_info = f"el más preciso fue {analysis['most_accurate']}"
-            
+
             if analysis['most_efficient'] == analysis['most_accurate']:
                 analysis["summary"] = summary_start + f"{analysis['most_efficient']} fue tanto el más eficiente como el más preciso."
             else:
                 analysis["summary"] = summary_start + efficiency_info + f" y {accuracy_info}. Se recomienda el método de {best_method} como mejor opción general."
-        
+
         return analysis
-    
+
     def generate_pdf_report(self, comparison_data, form_data):
         """Genera el informe PDF comparativo"""
         filename = f"informe_comparativo_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         filepath = os.path.join("static", "reports", filename)
-        
+
         # Crear directorio si no existe
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        
+
         doc = SimpleDocTemplate(filepath, pagesize=A4)
         styles = getSampleStyleSheet()
         story = []
-        
+
         # Título
         title_style = ParagraphStyle(
             'CustomTitle',
@@ -241,10 +259,10 @@ class ComparisonService:
         )
         story.append(Paragraph("INFORME COMPARATIVO DE MÉTODOS NUMÉRICOS", title_style))
         story.append(Spacer(1, 12))
-        
+
         # Información general
         story.append(Paragraph("DATOS DE ENTRADA", styles['Heading2']))
-        
+
         data_info = [
             ["Parámetro", "Valor"],
             ["Función f(x)", form_data.get("function_f", "N/A")],
@@ -255,7 +273,7 @@ class ComparisonService:
             ["Máx. iteraciones", str(form_data.get("max_iterations"))],
             ["Tipo de precisión", form_data.get("precision")]
         ]
-        
+
         data_table = Table(data_info)
         data_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
@@ -267,19 +285,19 @@ class ComparisonService:
             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
-        
+
         story.append(data_table)
         story.append(Spacer(1, 20))
-        
+
         # Tabla comparativa de resultados
         story.append(Paragraph("RESULTADOS COMPARATIVOS", styles['Heading2']))
-        
+
         comparison_data_table = [["Método", "Estado", "Iteraciones", "Raíz aproximada", "Error final"]]
-        
+
         for method in comparison_data["methods"]:
             root_str = f"{method['root']:.6f}" if isinstance(method['root'], (int, float)) else str(method['root'])
             error_str = f"{method['final_error']:.2e}" if isinstance(method['final_error'], (int, float)) else str(method['final_error'])
-            
+
             comparison_data_table.append([
                 method["method"],
                 method["status"],
@@ -287,7 +305,7 @@ class ComparisonService:
                 root_str,
                 error_str
             ])
-        
+
         results_table = Table(comparison_data_table)
         results_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
@@ -299,63 +317,70 @@ class ComparisonService:
             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
-        
+
         story.append(results_table)
         story.append(Spacer(1, 20))
-        
+
         # Análisis
         if comparison_data.get("analysis") and comparison_data["has_valid_results"]:
             story.append(Paragraph("ANÁLISIS COMPARATIVO", styles['Heading2']))
-            
+
             analysis = comparison_data["analysis"]
-            
+
             if analysis.get("most_efficient"):
                 story.append(Paragraph(f"<b>Método más eficiente:</b> {analysis['most_efficient']}", styles['Normal']))
-            
+
             if analysis.get("most_accurate"):
                 story.append(Paragraph(f"<b>Método más preciso:</b> {analysis['most_accurate']}", styles['Normal']))
-            
+
             if analysis.get("best_overall"):
                 story.append(Paragraph(f"<b>Mejor método general:</b> {analysis['best_overall']}", styles['Normal']))
-            
+
             story.append(Spacer(1, 12))
             story.append(Paragraph("<b>Conclusión:</b>", styles['Normal']))
             story.append(Paragraph(analysis.get("summary", "No se pudo realizar el análisis."), styles['Normal']))
-        
+
         # Descripción de métodos
         story.append(Spacer(1, 20))
         story.append(Paragraph("DESCRIPCIÓN DE MÉTODOS", styles['Heading2']))
-        
+
         bisection_desc = """
         <b>Método de Bisección:</b> Técnica que encuentra raíces en un intervalo [a,b] donde f(a)×f(b)<0.
         Divide repetidamente el intervalo por la mitad hasta encontrar la raíz con la precisión deseada.
         Es robusto y siempre converge, pero puede ser lento.
         """
-        
+
         fixed_point_desc = """
         <b>Método de Punto Fijo:</b> Reformula la ecuación f(x)=0 como x=g(x) y usa iteraciones sucesivas
         para aproximarse a la raíz. Su convergencia depende de la función g(x) elegida y puede ser muy
         rápido cuando converge, pero no siempre garantiza convergencia.
         """
-        
+
         newton_desc = """
         <b>Método de Newton-Raphson:</b> Utiliza la derivada de la función para encontrar raíces mediante
         la fórmula x_{n+1} = x_n - f(x_n)/f'(x_n). Tiene convergencia cuadrática cuando funciona bien,
         pero requiere que f'(x) ≠ 0 y puede fallar si la derivada es pequeña o el punto inicial es inadecuado.
         """
-        
+
         regula_falsi_desc = """
         <b>Método de Regla Falsa (Falsa Posición):</b> Similar a bisección pero usa interpolación lineal
         para aproximar la raíz. Calcula el punto donde la línea secante interseca el eje x mediante
         c=(a×f(b)-b×f(a))/(f(b)-f(a)). Converge más rápido que bisección pero puede ser más lento cerca de la raíz.
         """
-        
+
         secant_desc = """
         <b>Método de la Secante:</b> Aproxima la derivada usando dos puntos, evitando el cálculo explícito
         de la derivada. Usa la fórmula x_{n+1} = x_n - f(x_n)×(x_n-x_{n-1})/(f(x_n)-f(x_{n-1})).
         Converge más rápido que bisección y no requiere derivadas, pero puede ser inestable.
         """
-        
+
+        multiple_roots_desc = """
+        <b>Método de Raíces Múltiples:</b> Generalización del método de Newton-Raphson para funciones
+        con raíces de multiplicidad m > 1. Usa la fórmula x_{n+1} = x_n - m×f(x_n)/f'(x_n), donde m
+        es la multiplicidad de la raíz. Converge cuadráticamente incluso cuando la raíz tiene multiplicidad,
+        a diferencia de Newton simple que solo converge linealmente en esos casos.
+        """
+
         story.append(Paragraph(bisection_desc, styles['Normal']))
         story.append(Spacer(1, 12))
         story.append(Paragraph(fixed_point_desc, styles['Normal']))
@@ -365,8 +390,10 @@ class ComparisonService:
         story.append(Paragraph(regula_falsi_desc, styles['Normal']))
         story.append(Spacer(1, 12))
         story.append(Paragraph(secant_desc, styles['Normal']))
-        
+        story.append(Spacer(1, 12))
+        story.append(Paragraph(multiple_roots_desc, styles['Normal']))
+
         # Generar PDF
         doc.build(story)
-        
+
         return filename

@@ -1,5 +1,191 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="text-center mt-5">Proyecto de Análisis Numérico</h1>
-<p class="text-center text-muted">Selecciona un capítulo en la parte superior</p>
+<div class="text-center mb-5">
+    <h1 class="fw-bold">Proyecto de Análisis Numérico</h1>
+    <p class="fs-5 text-secondary">Toca el método que quieres explorar.</p>
+</div>
+
+<div class="container">
+
+    <!-- Capítulo 1 -->
+    <h4 class="text-danger mt-4 mb-3">Capítulo 1: Raíces de ecuaciones</h4>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'bisection' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-primary"><i class="bi bi-sign-merge-left"></i></div>
+                    <div class="fw-bold">Bisección</div>
+                    <div class="text-muted small">Raíces en intervalos</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'regula_falsi' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-danger"><i class="bi bi-graph-up"></i></div>
+                    <div class="fw-bold">Regla Falsa</div>
+                    <div class="text-muted small">Interpolación lineal</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'newton_raphson' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-warning"><i class="bi bi-lightning-charge"></i></div>
+                    <div class="fw-bold">Newton-Raphson</div>
+                    <div class="text-muted small">Raíces con derivadas</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'secant' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-success"><i class="bi bi-diagram-3"></i></div>
+                    <div class="fw-bold">Secante</div>
+                    <div class="text-muted small">Dos puntos, sin derivadas</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'multiple_roots' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-info"><i class="bi bi-stack"></i></div>
+                    <div class="fw-bold">Raíces Múltiples</div>
+                    <div class="text-muted small">Manejando multiplicidad</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'fixed_point' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-secondary"><i class="bi bi-arrow-repeat"></i></div>
+                    <div class="fw-bold">Punto Fijo</div>
+                    <div class="text-muted small">x = g(x), simple iteración</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'comparison' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-dark"><i class="bi bi-bar-chart-line"></i></div>
+                    <div class="fw-bold">Comparar Métodos</div>
+                    <div class="text-muted small">Resultados lado a lado</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Capítulo 2 -->
+    <h4 class="text-danger mt-4 mb-3">Capítulo 2: Sistemas de ecuaciones</h4>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'jacobi' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-primary"><i class="bi bi-grid-1x2"></i></div>
+                    <div class="fw-bold">Jacobi</div>
+                    <div class="text-muted small">Iterativo por filas</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'gauss_seidel' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-danger"><i class="bi bi-grid-3x3-gap"></i></div>
+                    <div class="fw-bold">Gauss-Seidel</div>
+                    <div class="text-muted small">Iterativo optimizado</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'sor' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-warning"><i class="bi bi-sliders"></i></div>
+                    <div class="fw-bold">SOR</div>
+                    <div class="text-muted small">Sobre-relajación</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'comparison_linear' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-dark"><i class="bi bi-bar-chart"></i></div>
+                    <div class="fw-bold">Comparar Métodos</div>
+                    <div class="text-muted small">Lineales lado a lado</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Capítulo 3 -->
+    <h4 class="text-danger mt-4 mb-3">Capítulo 3: Interpolación</h4>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'lagrange' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-primary"><i class="bi bi-graph-up-arrow"></i></div>
+                    <div class="fw-bold">Lagrange</div>
+                    <div class="text-muted small">Polinomio interpolante</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'newton_interpol' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-danger"><i class="bi bi-lightning"></i></div>
+                    <div class="fw-bold">Newton Interpolación</div>
+                    <div class="text-muted small">Diferencias divididas</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'spline_linear' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-success"><i class="bi bi-link"></i></div>
+                    <div class="fw-bold">Spline Lineal</div>
+                    <div class="text-muted small">Tramos por segmentos</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'spline_cubic' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-info"><i class="bi bi-cubes"></i></div>
+                    <div class="fw-bold">Spline Cúbico</div>
+                    <div class="text-muted small">Mayor suavidad</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'vandermonde' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-warning"><i class="bi bi-align-center"></i></div>
+                    <div class="fw-bold">Vandermonde</div>
+                    <div class="text-muted small">Matriz clásica</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'comparison_interpol' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm method-card text-center p-2">
+                    <div class="mb-2 display-6 text-dark"><i class="bi bi-pie-chart"></i></div>
+                    <div class="fw-bold">Comparar Métodos</div>
+                    <div class="text-muted small">Interpolaciones juntas</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.method-card {
+    transition: box-shadow 0.2s, transform 0.15s;
+    cursor: pointer;
+}
+.method-card:hover {
+    box-shadow: 0px 5px 32px 0px #f45a4d44;
+    transform: translateY(-4px) scale(1.04);
+    z-index: 20;
+}
+</style>
+
 {% endblock %}

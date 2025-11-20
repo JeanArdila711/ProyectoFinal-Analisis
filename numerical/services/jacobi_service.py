@@ -6,12 +6,12 @@ from shared.utils.plot_matrix_solution import plot_matrix_solution, plot_system_
 class JacobiService(MatrixMethod):
     def solve(
         self,
-        A: list[list[float]],  # Matriz de coeficientes
-        b: list[float],  # Vector de términos independientes
-        x0: list[float],  # Vector inicial de aproximación
-        tolerance: float,  # Tolerancia para el error
-        max_iterations: int,  # Número máximo de iteraciones
-        precision_type: str = "decimales_correctos",  # Tipo de precisión
+        A: list[list[float]],
+        b: list[float],
+        x0: list[float],
+        tolerance: float,
+        max_iterations: int,
+        precision_type: str = "decimales_correctos",
         **kwargs,
     ) -> dict:
 
@@ -24,74 +24,159 @@ class JacobiService(MatrixMethod):
         current_error = tolerance + 1
         current_iteration = 0
         table = {}
+        warnings = []  # ✅ NUEVO: Lista de advertencias
 
-        # Inicialización de matrices para el cálculo de T y C
-        D = np.diag(np.diag(A))
-        L = np.tril(A, -1)
-        U = np.triu(A, 1)
+        # ========================================
+        # ✅ VALIDACIÓN 1: Diagonal no nula (verificación adicional)
+        # ========================================
+        for i in range(n):
+            if abs(A[i, i]) < 1e-12:
+                return {
+                    "message_method": f"❌ Error crítico: El elemento diagonal a[{i+1}][{i+1}] = {A[i,i]:.2e} es cero o muy cercano a cero. El método de Jacobi no puede continuar.",
+                    "table": {},
+                    "is_successful": False,
+                    "have_solution": False,
+                    "solution": [],
+                    "spectral_radius": None,
+                }
 
-        # Cálculo de la matriz de iteración T para el método Jacobi
-        T = np.linalg.inv(D).dot(L + U)
-        spectral_radius = max(abs(np.linalg.eigvals(T)))
-
-        while current_error > tolerance and current_iteration < max_iterations:
-            # Iteración de Jacobi
-            for i in range(n):
-                sum_others = np.dot(A[i, :i], x0[:i]) + np.dot(
-                    A[i, i + 1 :], x0[i + 1 :]
+        # ========================================
+        # ✅ VALIDACIÓN 2: Dominancia diagonal (advertencia, no error)
+        # ========================================
+        for i in range(n):
+            diagonal = abs(A[i, i])
+            suma_fila = sum(abs(A[i, j]) for j in range(n) if j != i)
+            
+            if diagonal <= suma_fila:
+                warnings.append(
+                    f"⚠️ Fila {i+1}: |a[{i+1}][{i+1}]| = {diagonal:.4f} ≤ suma_otros = {suma_fila:.4f}. "
+                    "La matriz NO es estrictamente diagonalmente dominante. El método puede no converger."
                 )
-                x1[i] = (b[i] - sum_others) / A[i, i]
 
-            current_error = np.linalg.norm(x1 - x0, ord=np.inf)
+        # ========================================
+        # Cálculo de la matriz de iteración T y radio espectral
+        # ========================================
+        try:
+            D = np.diag(np.diag(A))
+            L = np.tril(A, -1)
+            U = np.triu(A, 1)
 
-            # Aplicar precisión según el tipo seleccionado
-            formatted_x1 = self.apply_precision(x1.tolist(), precision_type, tolerance)
-            formatted_error = self.apply_precision([current_error], precision_type, tolerance)[0]
+            # Matriz de iteración T para Jacobi
+            T = np.linalg.inv(D).dot(L + U)
+            spectral_radius = max(abs(np.linalg.eigvals(T)))
+            
+            # ✅ Advertencia si radio espectral >= 1
+            if spectral_radius >= 1:
+                warnings.append(
+                    f"⚠️ Radio espectral = {spectral_radius:.6f} ≥ 1. "
+                    "El método NO convergerá. Verifica que la matriz sea diagonalmente dominante."
+                )
 
-            # Guardamos la información de la iteración actual
-            table[current_iteration + 1] = {
-                "iteration": current_iteration + 1,
-                "X": formatted_x1,
-                "Error": formatted_error,
+        except np.linalg.LinAlgError:
+            return {
+                "message_method": "❌ Error: No se pudo calcular la matriz de iteración. La matriz D es singular.",
+                "table": {},
+                "is_successful": False,
+                "have_solution": False,
+                "solution": [],
+                "spectral_radius": None,
             }
 
-            # Preparación para la siguiente iteración
-            x0 = x1.copy()
-            current_iteration += 1
+        # ========================================
+        # Iteración de Jacobi con manejo de excepciones
+        # ========================================
+        try:
+            while current_error > tolerance and current_iteration < max_iterations:
+                # Iteración de Jacobi
+                for i in range(n):
+                    # ✅ Validación adicional durante iteración
+                    if abs(A[i, i]) < 1e-14:
+                        raise ValueError(f"Diagonal a[{i+1}][{i+1}] se volvió cero durante la iteración {current_iteration}")
+                    
+                    sum_others = np.dot(A[i, :i], x0[:i]) + np.dot(A[i, i + 1:], x0[i + 1:])
+                    x1[i] = (b[i] - sum_others) / A[i, i]
 
-        # Verificación de éxito o fallo tras las iteraciones
+                current_error = np.linalg.norm(x1 - x0, ord=np.inf)
+
+                # Aplicar precisión según el tipo seleccionado
+                formatted_x1 = self.apply_precision(x1.tolist(), precision_type, tolerance)
+                formatted_error = self.apply_precision([current_error], precision_type, tolerance)[0]
+
+                # Guardamos la información de la iteración actual
+                table[current_iteration + 1] = {
+                    "iteration": current_iteration + 1,
+                    "X": formatted_x1,
+                    "Error": formatted_error,
+                }
+
+                # Preparación para la siguiente iteración
+                x0 = x1.copy()
+                current_iteration += 1
+
+        except (ValueError, RuntimeWarning, FloatingPointError) as e:
+            return {
+                "message_method": f"❌ Error numérico durante las iteraciones: {str(e)}",
+                "table": table,
+                "is_successful": False,
+                "have_solution": False,
+                "solution": x1.tolist(),
+                "spectral_radius": spectral_radius,
+                "warnings": warnings,
+            }
+
+        # ========================================
+        # Resultados finales
+        # ========================================
         result = {}
+        
         if current_error <= tolerance:
+            message = f"✅ Aproximación encontrada con tolerancia = {tolerance}"
+            if warnings:
+                message += f"\n\n⚠️ ADVERTENCIAS:\n" + "\n".join(warnings)
+            
             result = {
-                "message_method": f"Aproximación de la solución con tolerancia = {tolerance} y el radio espectral es de = {spectral_radius}",
+                "message_method": message,
                 "table": table,
                 "is_successful": True,
                 "have_solution": True,
                 "solution": formatted_x1,
                 "spectral_radius": spectral_radius,
+                "warnings": warnings,
             }
+        
         elif current_iteration >= max_iterations:
+            message = f"⚠️ Se alcanzaron {max_iterations} iteraciones sin convergencia (error final = {current_error:.2e}, radio espectral = {spectral_radius:.6f})"
+            if warnings:
+                message += f"\n\nPosibles causas:\n" + "\n".join(warnings)
+            
             result = {
-                "message_method": f"El método funcionó correctamente, pero no se encontró una solución en {max_iterations} iteraciones y el radio espectral es de = {spectral_radius}.",
+                "message_method": message,
                 "table": table,
                 "is_successful": True,
                 "have_solution": False,
                 "solution": formatted_x1,
                 "spectral_radius": spectral_radius,
+                "warnings": warnings,
             }
+        
         else:
             result = {
-                "message_method": f"El método falló al intentar aproximar una solución",
+                "message_method": "❌ El método falló al intentar aproximar una solución",
                 "table": table,
-                "is_successful": True,
+                "is_successful": False,
                 "have_solution": False,
                 "solution": [],
+                "spectral_radius": spectral_radius,
+                "warnings": warnings,
             }
 
-        # Si la matriz es 2x2, generar la gráfica
-        if len(A) == 2:
-            plot_matrix_solution(table, x1.tolist(), spectral_radius)
-            plot_system_equations(A.tolist(), b.tolist(), x1.tolist())
+        # Generar gráficas para 2x2
+        if len(A) == 2 and result["have_solution"]:
+            try:
+                plot_matrix_solution(table, x1.tolist(), spectral_radius)
+                plot_system_equations(A.tolist(), b.tolist(), x1.tolist())
+            except Exception as e:
+                result["warnings"].append(f"⚠️ No se pudieron generar las gráficas: {str(e)}")
 
         return result
 
@@ -100,15 +185,12 @@ class JacobiService(MatrixMethod):
         Aplica precisión a una lista de valores basada en el tipo de precisión seleccionado.
         """
         if precision_type == "cifras_significativas":
-            # Calcular cifras significativas según la tolerancia
             significant_figures = -int(np.floor(np.log10(tolerance)))
             return [round(value, significant_figures) for value in values]
         elif precision_type == "decimales_correctos":
-            # Usar la cantidad de decimales basada en la tolerancia
             decimal_places = -int(np.floor(np.log10(tolerance)))
             return [round(value, decimal_places) for value in values]
         else:
-            # Sin cambios si no se selecciona un tipo válido
             return values
 
     def validate_input(
@@ -122,43 +204,41 @@ class JacobiService(MatrixMethod):
         **kwargs,
     ) -> str | list:
 
-        # Validación de los parámetros de entrada tolerancia positiva
+        # Validación de tolerancia
         if not isinstance(tolerance, (int, float)) or tolerance <= 0:
-            return "La tolerancia debe ser un número positivo"
+            return "❌ La tolerancia debe ser un número positivo."
 
-        # Validación de los parámetros de entrada maximo numero de iteraciones positivo
+        # Validación de iteraciones
         if not isinstance(max_iterations, int) or max_iterations <= 0:
-            return "El máximo número de iteraciones debe ser un entero positivo."
+            return "❌ El máximo número de iteraciones debe ser un entero positivo."
 
-        # Validación de las entradas numéricas
+        # Validación de entradas numéricas
         try:
             A = [
                 [float(num) for num in row.strip().split()]
                 for row in matrix_a_raw.replace(";", "\n").split("\n")
                 if row.strip()
-]
-
+            ]
             b = [float(num) for num in vector_b_raw.strip().split()]
             x0 = [float(num) for num in initial_guess_raw.strip().split()]
         except ValueError:
-            return "Todas las entradas deben ser numéricas."
+            return "❌ Todas las entradas deben ser numéricas."
 
-        # Validar que A es cuadrada y coincide con el tamaño seleccionado
+        # Validar tamaño de matriz
         if len(A) != matrix_size or any(len(row) != matrix_size for row in A):
-            return f"La matriz A debe ser cuadrada y coincidir con el tamaño seleccionado ({matrix_size}x{matrix_size})."
-        
-        # Validar que A es cuadrada y de máximo tamaño 7x7
-        if len(A) > 7 or any(len(row) != len(A) for row in A):
-            return "La matriz A debe ser cuadrada de hasta 7x7."
+            return f"❌ La matriz A debe ser cuadrada {matrix_size}x{matrix_size}."
 
-        # Verificar que no haya ceros en la diagonal
-        if np.any(np.diag(A) == 0):
-            return ("El método Jacobi no puede continuar: la matriz A tiene ceros en su diagonal.")
-        
-        # Validar que b y x0 tengan tamaños compatibles con A
+        if len(A) > 7:
+            return "❌ La matriz A debe ser de hasta 7x7."
+
+        # ✅ Verificar diagonal no nula
+        A_np = np.array(A)
+        for i in range(len(A)):
+            if abs(A_np[i, i]) < 1e-12:
+                return f"❌ El elemento diagonal a[{i+1}][{i+1}] = {A_np[i,i]:.2e} es cero o muy cercano a cero. El método de Jacobi no puede continuar."
+
+        # Validar compatibilidad de vectores
         if len(b) != len(A) or len(x0) != len(A):
-            return (
-                "El vector b y x0 deben ser compatibles con el tamaño de la matriz A."
-            )
+            return "❌ Los vectores b y x₀ deben tener el mismo tamaño que la matriz A."
 
         return [A, b, x0]
