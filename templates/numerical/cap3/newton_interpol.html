@@ -147,29 +147,6 @@
             </div>
             {% endif %}
 
-            <!-- Fórmula matemática -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3> Fórmula</h3>
-                </div>
-                <div class="card-body">
-                    <p>El polinomio interpolante de Newton se construye como:</p>
-                    <div class="bg-secondary p-3 rounded text-center mb-3">
-                        <code class="text-white fs-6">
-                            P(x) = f[x₀] + f[x₀,x₁](x-x₀) + f[x₀,x₁,x₂](x-x₀)(x-x₁) + ...
-                        </code>
-                    </div>
-                    <p>
-                        Donde <code>f[x₀,x₁,...,xₙ]</code> son las diferencias divididas calculadas recursivamente mediante:
-                    </p>
-                    <div class="bg-secondary p-3 rounded text-center">
-                        <code class="text-white">
-                            f[xᵢ,xᵢ₊₁,...,xᵢ₊ⱼ] = (f[xᵢ₊₁,...,xᵢ₊ⱼ] - f[xᵢ,...,xᵢ₊ⱼ₋₁]) / (xᵢ₊ⱼ - xᵢ)
-                        </code>
-                    </div>
-                </div>
-            </div>
-
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">

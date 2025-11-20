@@ -162,36 +162,6 @@
             </div>
             {% endif %}
 
-            <!-- Fórmula matemática -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3>Fórmula del Spline Lineal</h3>
-                </div>
-                <div class="card-body">
-                    <p><strong>Para cada intervalo [x<sub>i</sub>, x<sub>i+1</sub>]:</strong></p>
-                    <div class="bg-secondary p-3 rounded text-center mb-3">
-                        <code class="text-white fs-6">
-                            S<sub>i</sub>(x) = m<sub>i</sub> · (x - x<sub>i</sub>) + y<sub>i</sub>
-                        </code>
-                    </div>
-
-                    <p class="mt-3"><strong>Donde la pendiente m<sub>i</sub> es:</strong></p>
-                    <div class="bg-secondary p-3 rounded text-center mb-3">
-                        <code class="text-white fs-6">
-                            m<sub>i</sub> = (y<sub>i+1</sub> - y<sub>i</sub>) / (x<sub>i+1</sub> - x<sub>i</sub>)
-                        </code>
-                    </div>
-
-                    <p class="mt-3">
-                        <strong>Ventajas matemáticas:</strong>
-                    </p>
-                    <ul>
-                        <li>Primera derivada (pendiente) es constante en cada tramo</li>
-                        <li>No requiere resolver ecuaciones lineales</li>
-                        <li>Garantizado pasar exactamente por los puntos</li>
-                    </ul>
-                </div>
-            </div>
 
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">

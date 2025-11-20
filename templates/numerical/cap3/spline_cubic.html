@@ -174,34 +174,6 @@
             </div>
             {% endif %}
 
-            <!-- Fórmula matemática -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3> Fórmula del Spline Cúbico</h3>
-                </div>
-                <div class="card-body">
-                    <p><strong>Para cada intervalo [x<sub>i</sub>, x<sub>i+1</sub>]:</strong></p>
-                    <div class="bg-secondary p-3 rounded text-center mb-3">
-                        ode class="text-white fsfs-6">
-                            S<sub>i</sub>(x) = a<sub>i</sub> + b<sub>i</sub>·(x - x<sub>i</sub>) + c<sub>i</sub>·(x - x<sub>i</sub>)² + d<sub>i</sub>·(x - x<sub>i</sub>)³
-                        </code>
-                    </div>
-
-                    <p class="mt-3"><strong>Condiciones de continuidad:</strong></p>
-                    <ul>
-                        <li><strong>C⁰:</strong> S<sub>i</sub>(x<sub>i+1</sub>) = S<sub>i+1</sub>(x<sub>i+1</sub>) (puntos coinciden)</li>
-                        <li><strong>C¹:</strong> S'<sub>i</sub>(x<sub>i+1</sub>) = S'<sub>i+1</sub>(x<sub>i+1</sub>) (primera derivada continua)</li>
-                        <li><strong>C²:</strong> S''<sub>i</sub>(x<sub>i+1</sub>) = S''<sub>i+1</sub>(x<sub>i+1</sub>) (segunda derivada continua)</li>
-                    </ul>
-
-                    <p class="mt-3"><strong>Condiciones de frontera "Natural":</strong></p>
-                    <ul>
-                        <li>S''(x₀) = 0 (curvatura cero al inicio)</li>
-                        <li>S''(x<sub>n</sub>) = 0 (curvatura cero al final)</li>
-                    </ul>
-                </div>
-            </div>
-
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">

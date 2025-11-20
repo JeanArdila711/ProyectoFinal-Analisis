@@ -281,25 +281,6 @@
             </div>
             {% endif %}
 
-            <!-- Fórmula matemática -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3> Fórmula de Gauss-Seidel</h3>
-                </div>
-                <div class="card-body">
-                    <p><strong>Fórmula iterativa:</strong></p>
-                    <div class="bg-secondary p-3 rounded text-center mb-3">
-                        <code class="text-white fs-6">
-                            x<sub>i</sub><sup>(k+1)</sup> = (b<sub>i</sub> - Σ<sub>j&lt;i</sub> a<sub>ij</sub> x<sub>j</sub><sup>(k+1)</sup> - Σ<sub>j&gt;i</sub> a<sub>ij</sub> x<sub>j</sub><sup>(k)</sup>) / a<sub>ii</sub>
-                        </code>
-                    </div>
-                    <p>
-                        Nota la diferencia con Jacobi: usa los valores <strong>ya actualizados x<sup>(k+1)</sup></strong> 
-                        de las variables anteriores en la misma iteración.
-                    </p>
-                </div>
-            </div>
-
             <!-- Comparación con Jacobi -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">

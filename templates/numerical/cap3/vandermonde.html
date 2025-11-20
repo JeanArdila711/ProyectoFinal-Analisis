@@ -156,56 +156,6 @@
             </div>
             {% endif %}
 
-            <!-- Matriz de Vandermonde -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3> Matriz de Vandermonde</h3>
-                </div>
-                <div class="card-body">
-                    <p><strong>Para los puntos x₀, x₁, x₂, ..., x_{n-1}, la matriz V es:</strong></p>
-                    <div class="bg-secondary p-3 rounded text-center mb-3">
-                        ode class="text-white fs-6-6">
-                            V = [<br>
-                            &nbsp;&nbsp;1  x₀  x₀²  x₀³  ... x₀^{n-1}<br>
-                            &nbsp;&nbsp;1  x₁  x₁²  x₁³  ... x₁^{n-1}<br>
-                            &nbsp;&nbsp;1  x₂  x₂²  x₂³  ... x₂^{n-1}<br>
-                            &nbsp;&nbsp;⋮  ⋮   ⋮    ⋮    ⋱   ⋮<br>
-                            &nbsp;&nbsp;1  x_{n-1}  x_{n-1}² ... x_{n-1}^{n-1}<br>
-                            ]
-                        </code>
-                    </div>
-
-                    <p class="mt-3"><strong>Sistema a resolver:</strong></p>
-                    <div class="bg-secondary p-3 rounded text-center">
-                        ode class="textxt-white fs-6">
-                            V · [a₀, a₁, a₂, ..., a_{n-1}]ᵀ = [y₀, y₁, y₂, ..., y_{n-1}]ᵀ
-                        </code>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fórmula matemática -->
-            <div class="card bg-dark text-white mb-4">
-                <div class="card-header">
-                    <h3> Fórmula del Polinomio Interpolante</h3>
-                </div>
-                <div class="card-body">
-                    <p><strong>El polinomio resultante es:</strong></p>
-                    <div class="bg-secondary p-3 rounded text-center mb-3">
-                        ode class="text-white fs-6-6">
-                            P(x) = a₀ + a₁·x + a₂·x² + a₃·x³ + ... + a_{n-1}·x^{n-1}
-                        </code>
-                    </div>
-
-                    <p class="mt-3"><strong>Donde:</strong></p>
-                    <ul>
-                        <li>Los coeficientes [a₀, a₁, a₂, ...] se obtienen resolviendo el sistema</li>
-                        <li>El grado del polinomio es n-1 (n es cantidad de puntos)</li>
-                        <li>P(xᵢ) = yᵢ para todos los puntos (interpolación exacta)</li>
-                    </ul>
-                </div>
-            </div>
-
             <!-- Ejemplos -->
             <div class="card bg-dark text-white mb-4">
                 <div class="card-header">
